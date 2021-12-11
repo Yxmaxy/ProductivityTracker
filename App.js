@@ -3,31 +3,30 @@ import { StyleSheet, Text, View } from 'react-native';
 import Constants from "expo-constants";
 import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import * as SQLite from "expo-sqlite";
+import TodayScreen from './components/Today';
 
-function HomeScreen() {
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Home!</Text>
-        </View>
-    );
-}
-  
-  function SettingsScreen() {
-    return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Settings!</Text>
-        </View>
-    );
-}
+//* Database
+const db = SQLite.openDatabase("db.db");
 
+//* Navigator
 const Tab = createMaterialTopTabNavigator();
 
-export default function App() {
+//* App component
+const App = () => {
     const [date, setDate] = useState(null);
 
     useEffect(() => {
+        // set current date to bar on top
         const today = new Date;
         setDate(today.getDate() + ". " + (today.getMonth() + 1) + ". " + today.getFullYear());
+
+        // create tables if they don't exist
+        db.transaction((tx) => {
+            tx.executeSql(
+                "CREATE TABLE IF NOT EXISTS goals (id_goal INTEGER PRIMARY KEY AUTOINCREMENT, name);"
+            );
+        });
     }, [])
 
     return (
@@ -47,10 +46,10 @@ export default function App() {
                         },
                     }}
                 >
-                    <Tab.Screen name="Today" component={HomeScreen} />
-                    <Tab.Screen name="Month" component={SettingsScreen} />
-                    <Tab.Screen name="Longterm" component={SettingsScreen} />
-                    <Tab.Screen name="Reminders" component={SettingsScreen} />
+                    <Tab.Screen name="Today" component={TodayScreen} />
+                    <Tab.Screen name="Month" component={TodayScreen} />
+                    <Tab.Screen name="Longterm" component={TodayScreen} />
+                    <Tab.Screen name="Reminders" component={TodayScreen} />
                 </Tab.Navigator>
             </NavigationContainer>
         </View>
@@ -69,3 +68,5 @@ const styles = StyleSheet.create({
         paddingTop: Constants.statusBarHeight,
     },
 });
+
+export default App;
