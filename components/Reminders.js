@@ -5,7 +5,7 @@ import FloatingButton from "./FloatingButton";
 
 const db = SQLite.openDatabase("db.db");
 
-const Reminders = () => {
+const Reminders = ({ navigation }) => {
     const [reminders, setReminders] = useState([1, 2, 3]);
 
     useEffect(() => {
@@ -26,7 +26,7 @@ const Reminders = () => {
                     return (<Text id={reminder}>{reminder}</Text>);
                 })}
             </ScrollView>
-            <FloatingButton text="Hello" />
+            <FloatingButton text="Hello" navigation={navigation} />
         </>
     );
 }
