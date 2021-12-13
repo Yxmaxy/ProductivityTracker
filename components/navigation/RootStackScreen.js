@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import TabNavScreen from './TabNavScreen';
-import Reminders from '../Reminders';
+import RemindersScreen from '../RemindersScreen';
 
 const RootStack = createStackNavigator();
 const RootStackScreen = () => {
@@ -16,7 +16,7 @@ const RootStackScreen = () => {
             />
             <RootStack.Screen
                 name="Modal"
-                component={ Reminders }
+                component={ RemindersScreen }
                 options={{ 
                     animationEnabled: true,
                     headerShown: true,

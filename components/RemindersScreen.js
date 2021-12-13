@@ -5,7 +5,7 @@ import FloatingButton from "./FloatingButton";
 
 const db = SQLite.openDatabase("db.db");
 
-const Reminders = ({ navigation }) => {
+const RemindersScreen = ({ navigation }) => {
     const [reminders, setReminders] = useState([1, 2, 3]);
 
     useEffect(() => {
@@ -36,4 +36,4 @@ const styles = StyleSheet.create({
         flex: 1
     }
 });
-export default Reminders;
+export default RemindersScreen;

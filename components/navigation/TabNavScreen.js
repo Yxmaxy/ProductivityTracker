@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Constants from 'expo-constants';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import TodayScreen from '../Today';
-import Longterm from '../Longterm';
-import Reminders from '../Reminders';
+import TodayScreen from '../TodayScreen';
+import LongtermScreen from '../LongtermScreen';
+import RemindersScreen from '../RemindersScreen';
+import MonthScreen from '../MonthScreen';
 
 const Tab = createMaterialTopTabNavigator();
 const TabNavScreen = () => {
@@ -33,9 +34,9 @@ const TabNavScreen = () => {
                 }}
             >
                 <Tab.Screen name="Today" component={ TodayScreen } />
-                <Tab.Screen name="Month" component={ TodayScreen } />
-                <Tab.Screen name="Longterm" component={ Longterm } />
-                <Tab.Screen name="Reminders" component={ Reminders } />
+                <Tab.Screen name="Month" component={ MonthScreen } />
+                <Tab.Screen name="Longterm" component={ LongtermScreen } />
+                <Tab.Screen name="Reminders" component={ RemindersScreen } />
             </Tab.Navigator>
         </View>
     );

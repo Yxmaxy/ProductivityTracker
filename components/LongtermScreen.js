@@ -3,7 +3,7 @@ import * as SQLite from "expo-sqlite";
 
 const db = SQLite.openDatabase("db.db");
 
-const Longterm = () => {
+const LongtermScreen = () => {
     useEffect(() => {
         db.transaction((tx) => {
             tx.executeSql("SELECT * FROM Goals WHERE is_longterm;", [], (_, { rows }) => {
@@ -17,4 +17,4 @@ const Longterm = () => {
     return(<></>);
 }
 
-export default Longterm;
+export default LongtermScreen;
