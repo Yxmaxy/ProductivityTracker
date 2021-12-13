@@ -5,6 +5,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import * as SQLite from "expo-sqlite";
 import TodayScreen from './components/Today';
+import Longterm from './components/Longterm';
+import Reminders from './components/Reminders';
 
 //* Database
 const db = SQLite.openDatabase("db.db");
@@ -24,7 +26,21 @@ const App = () => {
         // create tables if they don't exist
         db.transaction((tx) => {
             tx.executeSql(
-                "CREATE TABLE IF NOT EXISTS goals (id_goal INTEGER PRIMARY KEY AUTOINCREMENT, name);"
+                `CREATE TABLE IF NOT EXISTS Goals (
+                    id_goal INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(100),
+                    id_group INTEGER,
+                    activity_length INTEGER,
+                    is_longterm BOOLEAN,
+                    FOREIGN KEY(id_group) REFERENCES GoalGroups(id_group)
+                );`
+            );
+            tx.executeSql(
+                `CREATE TABLE IF NOT EXISTS Reminders (
+                    id_reminder INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(100),
+                    notify_when DATETIME
+                );`
             );
         });
     }, [])
@@ -34,7 +50,7 @@ const App = () => {
             <Text style={styles.dateText}>{date}</Text>
             <NavigationContainer>
                 <Tab.Navigator 
-                    initialRouteName={"Today"}
+                    initialRouteName={"Reminders"}
                     screenOptions={{
                         tabBarLabelStyle: { fontSize: 11 },
                         tabBarStyle: { backgroundColor: 'dodgerblue' },
@@ -46,10 +62,10 @@ const App = () => {
                         },
                     }}
                 >
-                    <Tab.Screen name="Today" component={TodayScreen} />
-                    <Tab.Screen name="Month" component={TodayScreen} />
-                    <Tab.Screen name="Longterm" component={TodayScreen} />
-                    <Tab.Screen name="Reminders" component={TodayScreen} />
+                    <Tab.Screen name="Today" component={ TodayScreen } />
+                    <Tab.Screen name="Month" component={ TodayScreen } />
+                    <Tab.Screen name="Longterm" component={ Longterm } />
+                    <Tab.Screen name="Reminders" component={ Reminders } />
                 </Tab.Navigator>
             </NavigationContainer>
         </View>
