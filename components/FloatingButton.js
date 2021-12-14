@@ -1,12 +1,12 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text } from "react-native";
 
-const FloatingButton = ({ navigation, text }) => {
+const FloatingButton = ({ text, navigation, navigateTo }) => {
     return(
         <TouchableOpacity style={ styles.button }
             onPress={() => {
                 console.log("I've been dePRESSED");
-                navigation.navigate("Modal");
+                navigation.navigate(navigateTo);
             }}
         >
             <Text>{ text }</Text>

@@ -26,7 +26,7 @@ const RemindersScreen = ({ navigation }) => {
                     return (<Text id={reminder}>{reminder}</Text>);
                 })}
             </ScrollView>
-            <FloatingButton text="Hello" navigation={navigation} />
+            <FloatingButton text="+" navigation={navigation} navigateTo="AddReminder" />
         </>
     );
 }
