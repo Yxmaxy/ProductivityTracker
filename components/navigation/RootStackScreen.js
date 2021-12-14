@@ -2,6 +2,8 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import TabNavScreen from './TabNavScreen';
 import AddReminder from '../AddReminder';
+import AddGoal from '../AddGoal';
+import AddGroup from '../AddGroup';
 
 const RootStack = createStackNavigator();
 const RootStackScreen = () => {
@@ -10,6 +12,15 @@ const RootStackScreen = () => {
             headerShown: false,
             animationEnabled: false,
         }}>
+            <RootStack.Screen
+                name="AddGroup"
+                component={ AddGroup }
+                options={{ 
+                    animationEnabled: true,
+                    headerShown: true,
+                    headerTitle: "Add a group",
+                }}
+            />
             <RootStack.Screen 
                 name="TabNavScreen"
                 component={ TabNavScreen }
@@ -21,6 +32,15 @@ const RootStackScreen = () => {
                     animationEnabled: true,
                     headerShown: true,
                     headerTitle: "Add a reminder",
+                }}
+            />
+            <RootStack.Screen
+                name="AddGoal"
+                component={ AddGoal }
+                options={{ 
+                    animationEnabled: true,
+                    headerShown: true,
+                    headerTitle: "Add a goal",
                 }}
             />
         </RootStack.Navigator>
