@@ -10,6 +10,10 @@ const RootStackScreen = () => {
             headerShown: false,
             animationEnabled: false,
         }}>
+            <RootStack.Screen 
+                name="TabNavScreen"
+                component={ TabNavScreen }
+            />
             <RootStack.Screen
                 name="AddReminder"
                 component={ AddReminder }
@@ -19,12 +23,6 @@ const RootStackScreen = () => {
                     headerTitle: "Add a reminder",
                 }}
             />
-            <RootStack.Screen 
-                name="TabNavScreen"
-                component={ TabNavScreen }
-            />
-            
-            
         </RootStack.Navigator>
     );
 }

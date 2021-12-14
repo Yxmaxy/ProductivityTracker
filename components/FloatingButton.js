@@ -5,7 +5,6 @@ const FloatingButton = ({ text, navigation, navigateTo }) => {
     return(
         <TouchableOpacity style={ styles.button }
             onPress={() => {
-                console.log("I've been dePRESSED");
                 navigation.navigate(navigateTo);
             }}
         >

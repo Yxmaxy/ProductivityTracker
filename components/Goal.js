@@ -2,13 +2,13 @@ import React from "react";
 import {StyleSheet, TouchableOpacity, Text } from "react-native";
 
 
-const Goal = () => {
+const Goal = ({ title }) => {
     return (
         <TouchableOpacity 
             style={ styles.container }
             activeOpacity={ 0.8 }
         >
-            <Text>Hello</Text>
+            <Text>{ title }</Text>
             <Text>Yes</Text>
         </TouchableOpacity>
     );

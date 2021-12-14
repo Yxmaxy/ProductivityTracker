@@ -1,70 +1,85 @@
 import React, { useState } from 'react';
-import { StyleSheet, KeyboardAvoidingView, Text, TextInput, Pressable, View, Button } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Platform, Text, TextInput, Pressable, Button } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import * as SQLite from "expo-sqlite";
 
-const AddReminder = () => {
+const db = SQLite.openDatabase("db.db");
+
+const AddReminder = ({ navigation }) => {
     const [name, onChangeName] = useState("");
     const [date, setDate] = useState(new Date());
-    const [showDatePicker, setShowDatePicker] = useState(false);
     const [time, setTime] = useState(new Date());
-    const [showTimePicker, setShowTimePicker] = useState(false);
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
 
-    const onDateChange = (event, selectedDate) => {
-        console.log(selectedDate);
-        if (selectedDate != null)
-            setDate(selectedDate);
-        setShowDatePicker(false);
-    };
-
-    const onTimeChange = (event, selectedTime) => {
-        if (selectedTime != null) {
-            console.log(selectedTime.getTime());
-            setTime(selectedTime.getTime());
+    const onChange = (event, selectedValue) => {
+        setShow(Platform.OS === 'ios');
+        if (mode == 'date') {
+            const currentDate = selectedValue || new Date();
+            setDate(currentDate);
+            setMode('time');
+            setShow(Platform.OS !== 'ios'); // to show the picker again in time mode
+        } else {
+            const selectedTime = selectedValue || new Date();
+            setTime(selectedTime);
+            setShow(Platform.OS === 'ios');
+            setMode('date');
         }
-        setShowTimePicker(false);
     };
-    
 
-    return(
-        <KeyboardAvoidingView style={styles.container}>
+    const showMode = currentMode => {
+        setShow(true);
+        setMode(currentMode);
+    };
+
+    const showDatepicker = () => {
+        showMode('date');
+    };
+
+    const formatDate = (date, time) => {
+        return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()} ${time.getHours() - 2}:${time.getMinutes()}`;
+    };
+
+    return (
+        <View style={ styles.container }>
             <Text>Name</Text>
             <TextInput
                 onChangeText={ onChangeName }
                 value={name}
                 style= {styles.textInput}
             />
-            <View style={styles.inputRow}>
-                <Text>Select notification date</Text>
-                <Button title={date.toDateString()} onPress={() => setShowDatePicker(true)}></Button>
-            </View>
-            <View style={styles.inputRow}>
-                <Text>Select notification time</Text>
-                <Button title={time.getHours() + ":" + time.getMinutes()} onPress={() => setShowTimePicker(true)}></Button>
-            </View>
+            <Text>Notification time</Text>
+            <TouchableOpacity onPress={showDatepicker}>
+                <Text>{formatDate(date, time)}</Text>
+            </TouchableOpacity>
+            {show && (
+                <DateTimePicker
+                testID="dateTimePicker"
+                timeZoneOffsetInMinutes={0}
+                value={date}
+                mode={mode}
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+                />
+            )}
             <Pressable 
                 style={styles.submitButton}
                 onPress={() => {
-                    console.log("oi")
+                    const selectedDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + (time.getHours() - 2) + ":" + time.getMinutes();
+                    db.transaction((tx) => {
+                        tx.executeSql("INSERT INTO Reminders(name, notify_when) VALUES (?, ?);", [name, selectedDate], () => {}, (t, error) => {
+                            console.log(error);
+                        });
+                    });
+                    navigation.pop();
                 }}
-            ><Text>Add reminder</Text></Pressable>
-            {showDatePicker && <DateTimePicker
-                value={date}
-                mode="date"
-                display="default"
-                onChange={onDateChange}
-            />}
-            
-            {showTimePicker && <DateTimePicker
-                value={time}
-                mode="time"
-                display="default"
-                is24Hour={true}
-                onChange={onTimeChange}
-            />}
-
-        </KeyboardAvoidingView>
+            >
+                <Text>Add reminder</Text>
+            </Pressable>
+        </View>
     );
-}
+};
 
 const styles = StyleSheet.create({
     container: {
