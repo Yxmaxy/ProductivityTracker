@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, Pressable, KeyboardAvoidingView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TextInput, Pressable, KeyboardAvoidingView, Button, View } from 'react-native';
 import * as SQLite from "expo-sqlite";
 import { Picker } from '@react-native-picker/picker';
 
@@ -10,6 +10,18 @@ const AddGoal = ({ navigation }) => {
     const [selectedGroup, setSelectedGroup] = useState("");
     const [selectedFrequency, setSelectedFrequency] = useState("week");
     const [daysBeforeDeadline, setDaysBeforeDeadline] = useState(0);
+    const [goalGroups, setGoalGroups] = useState([]);
+    const [forceUpdate, setForceUpdate] = useState(false);
+
+    useEffect(() => {
+        db.transaction((tx) => {
+            tx.executeSql("SELECT * FROM GoalGroups;", [], (_, { rows }) => {
+                setGoalGroups(rows._array);
+            }, (t, error) => {
+                console.log(error);
+            });
+        });
+    }, [forceUpdate])
 
     return (
         <KeyboardAvoidingView style={ styles.container }>
@@ -20,32 +32,58 @@ const AddGoal = ({ navigation }) => {
                 onChangeText={ setName }
             />
             <Text>Group</Text>
-            <Picker
-                selectedValue={selectedGroup}
-                onValueChange={(itemValue, itemIndex) => {
-                    setSelectedGroup(itemValue);
+            <View style={ styles.alignedRow }>
+                <Picker
+                    style={{
+                        flex: 1,
+                    }}
+                    selectedValue={selectedGroup}
+                    onValueChange={(itemValue, itemIndex) => {
+                        setSelectedGroup(itemValue);
                 }}>
-                <Picker.Item label="Java" value="java" />
-                <Picker.Item label="JavaScript" value="js" />
-            </Picker>
+                    {goalGroups.map(group => {
+                        return (
+                            <Picker.Item id={ group.id_group } label={ group.name } value={ group.id_group } style={{
+                                color: group.color,
+                            }}/>
+                        );
+                    })}
+                </Picker>
+                <Button title="+" 
+                    onPress={() => {
+                        navigation.navigate("AddGroup", {
+                            onGoBack: () => setForceUpdate(!forceUpdate)
+                        });
+                    }}
+                />
+            </View>
             <Text>Frequency</Text>
             <Picker
                 selectedValue={selectedFrequency}
                 onValueChange={(itemValue, itemIndex) => {
                     setSelectedFrequency(itemValue);
                 }}>
-                <Picker.Item label="Weekly" value="week" />
-                <Picker.Item label="Monthly" value="month" />
-                <Picker.Item label="Yearly" value="year" />
-                <Picker.Item label="Custom" value="custom" />
+                <Picker.Item id={1} label="Weekly" value="week" />
+                <Picker.Item id={2} label="Monthly" value="month" />
+                <Picker.Item id={3} label="Yearly" value="year" />
+                <Picker.Item id={4} label="Custom" value="custom" />
             </Picker>
             <Text>Days available before deadline</Text>
-            <TextInput 
-                style= {styles.textInput}
-                value={ daysBeforeDeadline.toString() }
-                onChangeText={ setDaysBeforeDeadline }
-                keyboardType="numeric"
-            />
+            <View style={ styles.alignedRow }>
+                <TextInput 
+                    style={[ styles.textInput, { flex: 1 } ]}
+                    value={ daysBeforeDeadline.toString() }
+                    onChangeText={ setDaysBeforeDeadline }
+                    keyboardType="numeric"
+                />
+                <Button title="+" onPress={() => {
+                    setDaysBeforeDeadline(daysBeforeDeadline + 1);
+                }}/>
+                <Button title="-" onPress={() => {
+                    if (daysBeforeDeadline > 0)
+                        setDaysBeforeDeadline(daysBeforeDeadline - 1);
+                }}/>
+            </View>
             <Text>Is longterm?</Text>
             <Text>Smaller goals</Text>
             <Text>Time</Text>
@@ -92,6 +130,10 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between"
+    },
+    alignedRow: {
+        display: "flex",
+        flexDirection: "row",
     }
 });
 

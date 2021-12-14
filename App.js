@@ -12,6 +12,13 @@ const App = () => {
         // create tables if they don't exist
         db.transaction((tx) => {
             tx.executeSql(
+                `CREATE TABLE IF NOT EXISTS GoalGroups (
+                    id_group INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(100),
+                    color CHAR(7)
+                );`
+            );
+            tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS Goals (
                     id_goal INTEGER PRIMARY KEY AUTOINCREMENT,
                     name VARCHAR(100),

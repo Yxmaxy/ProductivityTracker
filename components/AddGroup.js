@@ -5,37 +5,9 @@ import ColorPicker from 'react-native-wheel-color-picker';
 
 const db = SQLite.openDatabase("db.db");
 
-const AddGroup = ({ navigation }) => {
+const AddGroup = ({ route, navigation }) => {
     const [name, setName] = useState("");
     const [selectedColor, setSelectedColor] = useState("#db643a");
-
-    const COLORS = [
-        '#d73964',
-        '#d23440',
-        '#db643a',
-        '#e88334',
-        '#e2a71e',
-        '#e25241',
-        '#d0da59',
-        '#4053ae',
-        '#70b949',
-        '#73564a',
-        '#67ab5a',
-        '#8f36aa',
-        '#f6c244',
-        '#52b9d0',
-        '#4595ec',
-        '#009688',
-        '#5abeA7',
-        '#59bccd',
-        '#4a97e4',
-        '#2d68cd',
-        '#9946c7',
-        '#d9639e',
-        '#6d6f74',
-        '#939287',
-        '#868ea3',
-    ];
 
     return (
         <KeyboardAvoidingView style={ styles.container }>
@@ -70,10 +42,12 @@ const AddGroup = ({ navigation }) => {
                 style={styles.submitButton}
                 onPress={() => {
                     db.transaction((tx) => {
-                        /*tx.executeSql("INSERT INTO Reminders(name, notify_when) VALUES (?, ?);", [name, selectedDate], () => {}, (t, error) => {
+                        tx.executeSql("INSERT INTO GoalGroups(name, color) VALUES (?, ?);", [name, selectedColor], () => {}, (t, error) => {
                             console.log(error);
-                        });*/
+                        });
                     });
+                    route.params.onGoBack();
+                    navigation.goBack();
                 }}
             >
                 <Text>Add group</Text>

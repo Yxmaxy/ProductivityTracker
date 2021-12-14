@@ -12,15 +12,6 @@ const RootStackScreen = () => {
             headerShown: false,
             animationEnabled: false,
         }}>
-            <RootStack.Screen
-                name="AddGroup"
-                component={ AddGroup }
-                options={{ 
-                    animationEnabled: true,
-                    headerShown: true,
-                    headerTitle: "Add a group",
-                }}
-            />
             <RootStack.Screen 
                 name="TabNavScreen"
                 component={ TabNavScreen }
@@ -41,6 +32,15 @@ const RootStackScreen = () => {
                     animationEnabled: true,
                     headerShown: true,
                     headerTitle: "Add a goal",
+                }}
+            />
+            <RootStack.Screen
+                name="AddGroup"
+                component={ AddGroup }
+                options={{ 
+                    animationEnabled: true,
+                    headerShown: true,
+                    headerTitle: "Add a group",
                 }}
             />
         </RootStack.Navigator>
