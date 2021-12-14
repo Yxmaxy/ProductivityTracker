@@ -21,7 +21,7 @@ const TabNavScreen = () => {
         <View style={ styles.container }>
             <Text style={ styles.dateText }>{date}</Text>
             <Tab.Navigator 
-                initialRouteName={"Reminders"}
+                initialRouteName={"Today"}
                 screenOptions={{
                     tabBarLabelStyle: { fontSize: 11 },
                     tabBarStyle: { backgroundColor: 'dodgerblue' },

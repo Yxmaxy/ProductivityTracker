@@ -7,7 +7,7 @@ import Goal from "./Goal";
 const db = SQLite.openDatabase("db.db");
 
 const RemindersScreen = ({ navigation }) => {
-    const [reminders, setReminders] = useState([1, 2, 3]);
+    const [reminders, setReminders] = useState([]);
 
     useEffect(() => {
         db.transaction((tx) => {
@@ -23,7 +23,6 @@ const RemindersScreen = ({ navigation }) => {
         <>
             <ScrollView style={ styles.container }>
                 {reminders.map(reminder => {
-                    console.log(reminder);
                     return (<Goal id={reminder.id_reminder} title={reminder.name} />);
                 })}
             </ScrollView>

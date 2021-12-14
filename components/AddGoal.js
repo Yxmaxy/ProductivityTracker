@@ -2,16 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, Pressable, KeyboardAvoidingView, Button, View } from 'react-native';
 import * as SQLite from "expo-sqlite";
 import { Picker } from '@react-native-picker/picker';
+import Checkbox from 'expo-checkbox';
 
 const db = SQLite.openDatabase("db.db");
 
-const AddGoal = ({ navigation }) => {
+const AddGoal = ({ route, navigation }) => {
     const [name, setName] = useState("");
+    const [smallerGoalName, setSmallerGoalName] = useState("");
+    const [smallerGoals, setSmallerGoals] = useState([]);
     const [selectedGroup, setSelectedGroup] = useState("");
     const [selectedFrequency, setSelectedFrequency] = useState("week");
     const [daysBeforeDeadline, setDaysBeforeDeadline] = useState(0);
     const [goalGroups, setGoalGroups] = useState([]);
     const [forceUpdate, setForceUpdate] = useState(false);
+    const [isLongterm, setIsLongterm] = useState(route.params.isLongterm);
 
     useEffect(() => {
         db.transaction((tx) => {
@@ -57,50 +61,82 @@ const AddGoal = ({ navigation }) => {
                     }}
                 />
             </View>
-            <Text>Frequency</Text>
-            <Picker
-                selectedValue={selectedFrequency}
-                onValueChange={(itemValue, itemIndex) => {
-                    setSelectedFrequency(itemValue);
-                }}>
-                <Picker.Item id={1} label="Weekly" value="week" />
-                <Picker.Item id={2} label="Monthly" value="month" />
-                <Picker.Item id={3} label="Yearly" value="year" />
-                <Picker.Item id={4} label="Custom" value="custom" />
-            </Picker>
-            <Text>Days available before deadline</Text>
+            <Text>Is longterm?</Text>
+            <Checkbox 
+                value={isLongterm}
+                onValueChange={setIsLongterm}
+            />
+            { !isLongterm && <View>
+                <Text>Frequency</Text>
+                <Picker
+                    selectedValue={selectedFrequency}
+                    onValueChange={(itemValue, itemIndex) => {
+                        setSelectedFrequency(itemValue);
+                    }}>
+                    <Picker.Item id={1} label="Weekly" value="week" />
+                    <Picker.Item id={2} label="Monthly" value="month" />
+                    <Picker.Item id={3} label="Yearly" value="year" />
+                    <Picker.Item id={4} label="Custom" value="custom" />
+                </Picker>
+                <Text>Days available before deadline</Text>
+                <View style={ styles.alignedRow }>
+                    <TextInput 
+                        style={[ styles.textInput, { flex: 1 } ]}
+                        value={ daysBeforeDeadline.toString() }
+                        onChangeText={ setDaysBeforeDeadline }
+                        keyboardType="numeric"
+                    />
+                    <Button title="+" onPress={() => {
+                        setDaysBeforeDeadline(daysBeforeDeadline + 1);
+                    }}/>
+                    <Button title="-" onPress={() => {
+                        if (daysBeforeDeadline > 0)
+                            setDaysBeforeDeadline(daysBeforeDeadline - 1);
+                    }}/>
+                </View>
+            </View>}
+
+            <Text>Smaller goals</Text>
             <View style={ styles.alignedRow }>
-                <TextInput 
-                    style={[ styles.textInput, { flex: 1 } ]}
-                    value={ daysBeforeDeadline.toString() }
-                    onChangeText={ setDaysBeforeDeadline }
-                    keyboardType="numeric"
+                <TextInput
+                    style= {[ styles.textInput , {flex: 1}]}
+                    value={ smallerGoalName }
+                    onChangeText={ setSmallerGoalName }
+                    placeholder="Enter name of smaller goal"
                 />
-                <Button title="+" onPress={() => {
-                    setDaysBeforeDeadline(daysBeforeDeadline + 1);
-                }}/>
-                <Button title="-" onPress={() => {
-                    if (daysBeforeDeadline > 0)
-                        setDaysBeforeDeadline(daysBeforeDeadline - 1);
+                <Button title="Add" onPress={() => {
+                    setSmallerGoals([...smallerGoals, smallerGoalName]);
+                    setSmallerGoalName("");
                 }}/>
             </View>
-            <Text>Is longterm?</Text>
-            <Text>Smaller goals</Text>
-            <Text>Time</Text>
-            <TextInput
-                style= {styles.textInput}
-                value={name}
-                onChangeText={ setName }
-            />
-            
+            {smallerGoals.map((smallerGoal, index) => {
+                return <SmallerGoal id={index} name={smallerGoal} smallerGoals={smallerGoals} setSmallerGoals={setSmallerGoals}/>;
+            })}
+
             <Pressable 
                 style={styles.submitButton}
                 onPress={() => {
-                    db.transaction((tx) => {
-                        /*tx.executeSql("INSERT INTO Reminders(name, notify_when) VALUES (?, ?);", [name, selectedDate], () => {}, (t, error) => {
-                            console.log(error);
-                        });*/
-                    });
+                    if (isLongterm) {
+                        // insert goals
+                        var insertedId;
+                        db.transaction((tx) => {
+                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm) VALUES (?, ?, ?);", [name, selectedGroup, true], (txObj, resultSet) => {
+                                insertedId = resultSet.insertId;
+                            }, (t, error) => {
+                                console.log(error);
+                            });
+                        });
+                        // insert smaller goals
+                        db.transaction((tx) => {
+                            smallerGoals.forEach(smallerGoalName => {
+                                tx.executeSql("INSERT INTO SmallerGoals(name, id_goal) VALUES (?, ?);", [smallerGoalName, insertedId], () => {}, (t, error) => {
+                                    console.log(error);
+                                });
+                            });
+                            
+                        });
+                    }
+                    
                 }}
             >
                 <Text>Add goal</Text>
@@ -108,6 +144,17 @@ const AddGoal = ({ navigation }) => {
         </KeyboardAvoidingView>
     );
 };
+
+const SmallerGoal = ({ id, name, smallerGoals, setSmallerGoals }) => {
+    return (
+        <View style={ styles.inputRow } id={ id }>
+            <Text>{ name }</Text>
+            <Button title="Remove" onPress={() => {
+                setSmallerGoals(smallerGoals.filter(item => item !== name));
+            }}/>
+        </View>
+    );
+}
 
 const styles = StyleSheet.create({
     container: {
