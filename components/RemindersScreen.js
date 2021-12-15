@@ -25,7 +25,7 @@ const RemindersScreen = ({ navigation }) => {
         <>
             <ScrollView style={ styles.container }>
                 {reminders.map(reminder => {
-                    return (<Goal id={reminder.id_reminder} title={reminder.name} />);
+                    return (<Goal key={reminder.id_reminder} title={reminder.name} />);
                 })}
             </ScrollView>
             <FloatingButton text="+" navigation={navigation} navigateTo="AddReminder" />

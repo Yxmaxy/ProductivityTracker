@@ -73,10 +73,10 @@ const AddGoal = ({ route, navigation }) => {
                     onValueChange={(itemValue, itemIndex) => {
                         setSelectedFrequency(itemValue);
                     }}>
-                    <Picker.Item id={1} label="Weekly" value="week" />
-                    <Picker.Item id={2} label="Monthly" value="month" />
-                    <Picker.Item id={3} label="Yearly" value="year" />
-                    <Picker.Item id={4} label="Custom" value="custom" />
+                    <Picker.Item key={1} label="Weekly" value="week" />
+                    <Picker.Item key={2} label="Monthly" value="month" />
+                    <Picker.Item key={3} label="Yearly" value="year" />
+                    <Picker.Item key={4} label="Custom" value="custom" />
                 </Picker>
                 <Text>Days available before deadline</Text>
                 <View style={ styles.alignedRow }>
@@ -110,7 +110,7 @@ const AddGoal = ({ route, navigation }) => {
                 }}/>
             </View>
             {smallerGoals.map((smallerGoal, index) => {
-                return <SmallerGoal id={index} name={smallerGoal} smallerGoals={smallerGoals} setSmallerGoals={setSmallerGoals}/>;
+                return <SmallerGoal key={index} name={smallerGoal} smallerGoals={smallerGoals} setSmallerGoals={setSmallerGoals}/>;
             })}
 
             <Pressable 

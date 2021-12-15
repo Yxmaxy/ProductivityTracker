@@ -20,6 +20,10 @@ const App = () => {
                 );`
             );
             tx.executeSql(
+                `INSERT INTO GoalGroups(id_group, name, color)
+                VALUES (1, "Default", "#000000");`
+            );
+            tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS Goals (
                     id_goal INTEGER PRIMARY KEY AUTOINCREMENT,
                     name VARCHAR(100),
