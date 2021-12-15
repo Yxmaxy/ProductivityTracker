@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
 import { StyleSheet, ScrollView } from "react-native";
 import Goal from "./Goal";
 import FloatingButton from './FloatingButton';
+import { Context } from "./Store";
 
 const db = SQLite.openDatabase("db.db");
 
 const TodayScreen = ({ navigation }) => {
     const [goals, setGoals] = useState([]);
+
+    const [storeState, ] = useContext(Context);
 
     useEffect(() => {
         db.transaction((tx) => {
@@ -17,7 +20,7 @@ const TodayScreen = ({ navigation }) => {
                 console.log(error);
             })
         });
-    }, []);
+    }, [storeState.forceUpdate]);
 
     return (
         <>

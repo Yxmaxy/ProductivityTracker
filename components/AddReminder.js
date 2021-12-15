@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Platform, Text, TextInput, Pressable, Button } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as SQLite from "expo-sqlite";
+import { Context } from './Store';
 
 const db = SQLite.openDatabase("db.db");
 
@@ -11,6 +12,8 @@ const AddReminder = ({ navigation }) => {
     const [time, setTime] = useState(new Date());
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
+
+    const [, storeDispatch] = useContext(Context);
 
     const onChange = (event, selectedValue) => {
         setShow(Platform.OS === 'ios');
@@ -72,6 +75,7 @@ const AddReminder = ({ navigation }) => {
                             console.log(error);
                         });
                     });
+                    storeDispatch({ type: "TOGGLE_FORCE_UPDATE" });
                     navigation.pop();
                 }}
             >

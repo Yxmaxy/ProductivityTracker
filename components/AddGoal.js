@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet, Text, TextInput, Pressable, KeyboardAvoidingView, Button, View } from 'react-native';
 import * as SQLite from "expo-sqlite";
 import { Picker } from '@react-native-picker/picker';
 import Checkbox from 'expo-checkbox';
+import { Context } from './Store';
 
 const db = SQLite.openDatabase("db.db");
 
@@ -10,12 +11,13 @@ const AddGoal = ({ route, navigation }) => {
     const [name, setName] = useState("");
     const [smallerGoalName, setSmallerGoalName] = useState("");
     const [smallerGoals, setSmallerGoals] = useState([]);
-    const [selectedGroup, setSelectedGroup] = useState("");
+    const [selectedGroup, setSelectedGroup] = useState(1);
     const [selectedFrequency, setSelectedFrequency] = useState("week");
     const [daysBeforeDeadline, setDaysBeforeDeadline] = useState(0);
     const [goalGroups, setGoalGroups] = useState([]);
-    const [forceUpdate, setForceUpdate] = useState(false);
     const [isLongterm, setIsLongterm] = useState(route.params.isLongterm);
+
+    const [storeState, storeDispatch] = useContext(Context);
 
     useEffect(() => {
         db.transaction((tx) => {
@@ -25,7 +27,7 @@ const AddGoal = ({ route, navigation }) => {
                 console.log(error);
             });
         });
-    }, [forceUpdate])
+    }, [storeState.forceUpdate]);
 
     return (
         <KeyboardAvoidingView style={ styles.container }>
@@ -55,9 +57,7 @@ const AddGoal = ({ route, navigation }) => {
                 </Picker>
                 <Button title="+" 
                     onPress={() => {
-                        navigation.navigate("AddGroup", {
-                            onGoBack: () => setForceUpdate(!forceUpdate)
-                        });
+                        navigation.navigate("AddGroup");
                     }}
                 />
             </View>
@@ -136,7 +136,8 @@ const AddGoal = ({ route, navigation }) => {
                             
                         });
                     }
-                    
+                    storeDispatch({ type: "TOGGLE_FORCE_UPDATE" });
+                    navigation.pop();
                 }}
             >
                 <Text>Add goal</Text>

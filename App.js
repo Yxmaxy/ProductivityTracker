@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SQLite from 'expo-sqlite';
 import RootStackScreen from './components/navigation/RootStackScreen';
+import Store from './components/Store';
 
 //* Database
 const db = SQLite.openDatabase("db.db");
@@ -35,13 +36,23 @@ const App = () => {
                     notify_when DATETIME
                 );`
             );
+            tx.executeSql(
+                `CREATE TABLE IF NOT EXISTS SmallerGoals (
+                    id_smaller_goal INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name VARCHAR(100),
+                    id_goal INTEGER,
+                    FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+                );`
+            );
         });
     }, [])
 
     return (
-        <NavigationContainer>   
-            <RootStackScreen />
-        </NavigationContainer>
+        <Store>
+            <NavigationContainer>   
+                <RootStackScreen />
+            </NavigationContainer>
+        </Store>
     );
 }
 

@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { StyleSheet, Text, TextInput, Pressable, KeyboardAvoidingView, View } from 'react-native';
 import * as SQLite from "expo-sqlite";
 import ColorPicker from 'react-native-wheel-color-picker';
+import { Context } from './Store';
 
 const db = SQLite.openDatabase("db.db");
 
-const AddGroup = ({ route, navigation }) => {
+const AddGroup = ({ navigation }) => {
     const [name, setName] = useState("");
     const [selectedColor, setSelectedColor] = useState("#db643a");
+
+    const [, storeDispatch] = useContext(Context);
 
     return (
         <KeyboardAvoidingView style={ styles.container }>
@@ -46,8 +49,8 @@ const AddGroup = ({ route, navigation }) => {
                             console.log(error);
                         });
                     });
-                    route.params.onGoBack();
-                    navigation.goBack();
+                    storeDispatch({ type: "TOGGLE_FORCE_UPDATE" });
+                    navigation.pop();
                 }}
             >
                 <Text>Add group</Text>

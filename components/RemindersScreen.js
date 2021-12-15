@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
 import { StyleSheet, ScrollView, Text } from "react-native";
 import FloatingButton from "./FloatingButton";
 import Goal from "./Goal";
+import { Context } from "./Store";
 
 const db = SQLite.openDatabase("db.db");
 
 const RemindersScreen = ({ navigation }) => {
     const [reminders, setReminders] = useState([]);
+    const [storeState, ] = useContext(Context);
 
     useEffect(() => {
         db.transaction((tx) => {
@@ -17,7 +19,7 @@ const RemindersScreen = ({ navigation }) => {
                 console.log(error);
             });
         });
-    }, []);
+    }, [storeState.forceUpdate]);
 
     return(
         <>
