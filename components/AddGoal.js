@@ -16,6 +16,8 @@ const AddGoal = ({ route, navigation }) => {
     const [daysBeforeDeadline, setDaysBeforeDeadline] = useState(0);
     const [goalGroups, setGoalGroups] = useState([]);
     const [isLongterm, setIsLongterm] = useState(route.params.isLongterm);
+    const [weekSelectedDays, setWeekSelectedDays] = useState([]);
+    const [monthSelectedDay, setMonthSelectedDay] = useState(1);
 
     const [storeState, storeDispatch] = useContext(Context);
 
@@ -44,12 +46,12 @@ const AddGoal = ({ route, navigation }) => {
                         flex: 1,
                     }}
                     selectedValue={selectedGroup}
-                    onValueChange={(itemValue, itemIndex) => {
+                    onValueChange={(itemValue,) => {
                         setSelectedGroup(itemValue);
                 }}>
                     {goalGroups.map(group => {
                         return (
-                            <Picker.Item id={ group.id_group } label={ group.name } value={ group.id_group } style={{
+                            <Picker.Item key={ group.id_group } label={ group.name } value={ group.id_group } style={{
                                 color: group.color,
                             }}/>
                         );
@@ -78,6 +80,45 @@ const AddGoal = ({ route, navigation }) => {
                     <Picker.Item key={3} label="Yearly" value="year" />
                     <Picker.Item key={4} label="Custom" value="custom" />
                 </Picker>
+
+                { selectedFrequency == "week" && <>
+                <Text>Select days</Text>
+                    <View style={ styles.weekContainer }>
+                        {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => {
+                            return (
+                                <View key={i}>
+                                    <Text>{ day }</Text>
+                                    <Checkbox 
+                                        value={weekSelectedDays[i]}
+                                        onValueChange={value => {
+                                            const arr = [... weekSelectedDays];
+                                            arr[i] = value;
+                                            setWeekSelectedDays(arr);
+                                        }}
+                                    />
+                                </View>
+                            );
+                        })}
+                    </View>
+                </>}
+
+                { selectedFrequency == "month" && <>
+                    <Text>Select day in month</Text>
+                    <View style={ styles.alignedRow }>
+                        <TextInput 
+                            style={[ styles.textInput, { flex: 1 } ]}
+                            value={ monthSelectedDay.toString() }
+                            onChangeText={value => {
+                                if (value >= 0 && value < 31)
+                                    setMonthSelectedDay(value);
+                            }}
+                            keyboardType="numeric"
+                        />
+                    </View>
+                </>}
+
+                
+                
                 <Text>Days available before deadline</Text>
                 <View style={ styles.alignedRow }>
                     <TextInput 
@@ -95,7 +136,6 @@ const AddGoal = ({ route, navigation }) => {
                     }}/>
                 </View>
             </View>}
-
             <Text>Smaller goals</Text>
             <View style={ styles.alignedRow }>
                 <TextInput
@@ -182,6 +222,12 @@ const styles = StyleSheet.create({
     alignedRow: {
         display: "flex",
         flexDirection: "row",
+    },
+    weekContainer: {
+        display: "flex",
+        flexWrap: "wrap",
+        flexDirection: "row",
+        justifyContent: "space-between",
     }
 });
 
