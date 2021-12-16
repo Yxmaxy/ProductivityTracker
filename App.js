@@ -48,6 +48,43 @@ const App = () => {
                     FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
                 );`
             );
+            tx.executeSql(
+                `CREATE TABLE GoalYear (
+                    id_goal INTEGER,
+                    date DATE,
+                    num_available_before INTEGER,
+                    PRIMARY KEY(id_goal, date),
+                    FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+                );`
+            );
+            tx.executeSql(
+                `CREATE TABLE GoalMonth (
+                    id_goal INTEGER,
+                    day INTEGER,
+                    num_available_before INTEGER,
+                    PRIMARY KEY(id_goal, day),
+                    FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+                );`
+            );
+            tx.executeSql(
+                `CREATE TABLE GoalWeek (
+                    id_goal INTEGER,
+                    day INTEGER,
+                    PRIMARY KEY(id_goal, day),
+                    FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+                );`
+            );
+            tx.executeSql(
+                `CREATE TABLE GoalCustom (
+                    id_goal INTEGER,
+                    first_date DATE,
+                    num_days_between INTEGER,
+                    num_available_before INTEGER,
+                    PRIMARY KEY(id_goal, first_date),
+                    FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+                );`
+            );
+            // 15 % num_days_between == 0 or 15 % num_days_between >= num_days_between - num_days_before
         });
     }, [])
 

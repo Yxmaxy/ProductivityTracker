@@ -7,10 +7,6 @@ CREATE TABLE IF NOT EXISTS GoalGroups (
 INSERT INTO GoalGroups(name, color)
 VALUES ("Group1", "#FF0000"), ("Group2", "#0000FF");
 
-CREATE TABLE IF NOT EXISTS Frequency (
-   id_frequency INTEGER PRIMARY KEY AUTOINCREMENT
-);
-
 CREATE TABLE IF NOT EXISTS Goals (
    id_goal INTEGER PRIMARY KEY AUTOINCREMENT,
    name VARCHAR(100),
@@ -48,10 +44,10 @@ CREATE TABLE IF NOT EXISTS Reminders (
 
 CREATE TABLE GoalYear (
 	id_goal INTEGER,
-    date DATE,
-    num_available_before INTEGER,
-    PRIMARY KEY(id_goal, date),
-    FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+   date DATE,
+   num_available_before INTEGER,
+   PRIMARY KEY(id_goal, date),
+   FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
 );
 INSERT INTO GoalYear
 VALUES (1, "2021-12-13"), (1, "2021-12-15");

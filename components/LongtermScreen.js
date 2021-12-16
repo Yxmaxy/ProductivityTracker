@@ -47,8 +47,8 @@ const LongtermScreen = ({ navigation }) => {
             <ScrollView style={ styles.container }>
                 {longterm.map(longterm => {
                     return (
-                        <View>
-                            <Goal key={longterm.id_goal} title={longterm.name} />
+                        <View key={longterm.id_goal}>
+                            <Goal title={longterm.name} />
                             {smallerGoals[longterm.id_goal] && smallerGoals[longterm.id_goal].map(smallerGoal => {
                                 return <SmallerGoal key={smallerGoal.id_smaller_goal} title={smallerGoal.name} />
                             })}
