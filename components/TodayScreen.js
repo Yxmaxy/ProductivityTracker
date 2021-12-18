@@ -26,7 +26,7 @@ const TodayScreen = ({ navigation }) => {
         <>
             <ScrollView>
                 {goals.map(goal => {
-                    return (<Goal key={goal.id_reminder} title={goal.name} />);
+                    return (<Goal key={goal.id_goal} title={goal.name} />);
                 })}
             </ScrollView>
             <FloatingButton text="+" navigation={navigation} navigateTo="AddGoal" />

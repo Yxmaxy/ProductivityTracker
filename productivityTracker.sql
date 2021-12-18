@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS Goals (
    id_group INTEGER,
    activity_length INTEGER,
    is_longterm BOOLEAN,
+   date_started DATE,
    FOREIGN KEY(id_group) REFERENCES GoalGroups(id_group)
 );
 
