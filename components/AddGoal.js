@@ -258,7 +258,8 @@ const AddGoal = ({ route, navigation }) => {
                                     case "week":
                                         for (let i = 0; i < weekSelectedDays.length; i++) {
                                             if (weekSelectedDays[i]) {
-                                                tx.executeSql("INSERT INTO GoalWeek(id_goal, day) VALUES (?, ?);", [goalId, i], () => {}, (t, error) => {
+                                                const selectedDay = (i == 6) ? 0 : i + 1;
+                                                tx.executeSql("INSERT INTO GoalWeek(id_goal, day) VALUES (?, ?);", [goalId, selectedDay], () => {}, (t, error) => {
                                                     console.log(error);
                                                 });
                                             }

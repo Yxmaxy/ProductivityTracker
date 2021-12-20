@@ -5,7 +5,7 @@ const GoalGroup = ({ title, children }) => {
     const [showChildren, setShowChildren] = useState(true);
     return (
         <>
-            <Text onPress={() => {
+            <Text style={styles.container} onPress={() => {
                 setShowChildren(!showChildren);
             }}>{ title }</Text>
             { showChildren && children }
@@ -15,7 +15,8 @@ const GoalGroup = ({ title, children }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        padding: 10,
     }
 });
 

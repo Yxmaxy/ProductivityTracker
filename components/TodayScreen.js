@@ -18,23 +18,36 @@ const TodayScreen = ({ navigation }) => {
 
     useEffect(() => {
         db.transaction((tx) => {
-            /*tx.executeSql(`
-                SELECT first_date, num_available_before, num_days_between, (round(julianday('now') - julianday(first_date) - 1)) AS dateDiff 
-                FROM GoalCustom JOIN Goals USING(id_goal);
-            `, [], (_, { rows }) => {
-                console.log(rows._array);
+            tx.executeSql(`
+                    SELECT g.*, color
+                    FROM GoalWeek JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
+                    WHERE strftime('%w', 'now') = day
+                    AND date_started >= DATE('now');
+                `, [], (_, { rows }) => {
+                //console.log(rows._array);
+                setGoalsWeek(rows._array);
             }, (t, error) => {
                 console.log(error);
-            });*/
-
+            });
+            // Monthly goals
+            tx.executeSql(`
+                    SELECT g.*, color
+                    FROM GoalMonth JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
+                    WHERE CAST(strftime('%d','now') AS Integer) BETWEEN day - num_available_before AND day
+                    AND date_started >= DATE('now');
+                `, [], (_, { rows }) => {
+                //console.log(rows._array);
+                setGoalsMonth(rows._array);
+            }, (t, error) => {
+                console.log(error);
+            });
             // Yearly goals
             tx.executeSql(`
-                    SELECT *,
-                    substr(DATE('now'), 6) AS d1,
-                    substr(date, 6) AS d2,
+                    SELECT g.*, color,
                     substr(DATE(date, '-' || num_available_before || ' days'), 6) AS dateDiff
-                    FROM GoalYear JOIN Goals USING(id_goal)
-                    WHERE substr(DATE('now'), 6) BETWEEN dateDiff AND substr(date, 6);
+                    FROM GoalYear JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
+                    WHERE substr(DATE('now'), 6) BETWEEN dateDiff AND substr(date, 6)
+                    AND date_started >= DATE('now');
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
                 setGoalsYear(rows._array);
@@ -43,10 +56,11 @@ const TodayScreen = ({ navigation }) => {
             });
             // Custom goals
             tx.executeSql(`
-                    SELECT *,
+                    SELECT g.*, color,
                     ((round(julianday('now') - julianday(first_date) - 1)) % num_days_between) AS dateDiff
-                    FROM GoalCustom JOIN Goals USING(id_goal)
-                    WHERE dateDiff IS null OR dateDiff = 0 OR dateDiff >= num_days_between - num_available_before;
+                    FROM GoalCustom JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
+                    WHERE dateDiff IS null OR dateDiff = 0 OR dateDiff >= num_days_between - num_available_before
+                    AND date_started >= DATE('now');
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
                 setGoalsCustom(rows._array);
@@ -65,7 +79,9 @@ const TodayScreen = ({ navigation }) => {
                     })}
                 </GoalGroup>
                 <GoalGroup title="Monthly goals">
-                    
+                    {goalsMonth.map(goal => {
+                        return (<Goal key={goal.id_goal} title={goal.name} />);
+                    })}
                 </GoalGroup>
                 <GoalGroup title="Yearly goals">
                     {goalsYear.map(goal => {
