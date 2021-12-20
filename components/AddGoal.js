@@ -217,66 +217,65 @@ const AddGoal = ({ route, navigation }) => {
                 onPress={() => {
                     if (isLongterm) {
                         db.transaction((tx) => {
-                            var goalId;
                             // insert goals
                             tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm) VALUES (?, ?, ?);", [name, selectedGroup, true], (_, resultSet) => {
-                                goalId = resultSet.insertId;
+                                const goalId = resultSet.insertId;
+                                // insert smaller goals
+                                smallerGoals.forEach(smallerGoalName => {
+                                    tx.executeSql("INSERT INTO SmallerGoals(name, id_goal) VALUES (?, ?);", [smallerGoalName, goalId], () => {}, (t, error) => {
+                                        console.log(error);
+                                    });
+                                });
                             }, (t, error) => {
                                 console.log(error);
-                            });
-                            // insert smaller goals
-                            smallerGoals.forEach(smallerGoalName => {
-                                tx.executeSql("INSERT INTO SmallerGoals(name, id_goal) VALUES (?, ?);", [smallerGoalName, goalId], () => {}, (t, error) => {
-                                    console.log(error);
-                                });
                             });
                         });
                     } else {
                         const currentDate = new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate();
                         const selectedDate = calendarSelectedDay.getFullYear() + "-" + (calendarSelectedDay.getMonth() + 1) + "-" + calendarSelectedDay.getDate();
                         db.transaction((tx) => {
-                            var goalId;
                             // insert goals
                             tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, date_started) VALUES (?, ?, ?, ?);", [name, selectedGroup, false, currentDate], (_, resultSet) => {
-                                goalId = resultSet.insertId;
+                                const goalId = resultSet.insertId;
+                                // insert smaller goals
+                                smallerGoals.forEach(smallerGoalName => {
+                                    tx.executeSql("INSERT INTO SmallerGoals(name, id_goal) VALUES (?, ?);", [smallerGoalName, goalId], () => {}, (t, error) => {
+                                        console.log(error);
+                                    });
+                                });
+                                // insert depending on frequency
+                                switch (selectedFrequency) {
+                                    case "year":
+                                        tx.executeSql("INSERT INTO GoalYear(id_goal, date, num_available_before) VALUES (?, ?, ?);", [goalId, selectedDate, daysBeforeDeadline], () => {}, (t, error) => {
+                                            console.log(error);
+                                        });
+                                        break;
+                                    case "month":
+                                        tx.executeSql("INSERT INTO GoalMonth(id_goal, day, num_available_before) VALUES (?, ?, ?);", [goalId, monthSelectedDay, daysBeforeDeadline], () => {}, (t, error) => {
+                                            console.log(error);
+                                        });
+                                        break;
+                                    case "week":
+                                        for (let i = 0; i < weekSelectedDays.length; i++) {
+                                            if (weekSelectedDays[i]) {
+                                                tx.executeSql("INSERT INTO GoalWeek(id_goal, day) VALUES (?, ?);", [goalId, i], () => {}, (t, error) => {
+                                                    console.log(error);
+                                                });
+                                            }
+                                        }
+                                        break;
+                                    case "custom":
+                                        tx.executeSql("INSERT INTO GoalCustom(id_goal, first_date, num_days_between, num_available_before) VALUES (?, ?, ?, ?);", [goalId, selectedDate, customDaysBetween, daysBeforeDeadline], () => {}, (t, error) => {
+                                            console.log(error);
+                                        });
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }, (t, error) => {
                                 console.log(error);
                             });
-                            // insert smaller goals
-                            smallerGoals.forEach(smallerGoalName => {
-                                tx.executeSql("INSERT INTO SmallerGoals(name, id_goal) VALUES (?, ?);", [smallerGoalName, goalId], () => {}, (t, error) => {
-                                    console.log(error);
-                                });
-                            });
-                            // insert depending on frequency
-                            switch (selectedFrequency) {
-                                case "year":
-                                    tx.executeSql("INSERT INTO GoalYear(id_goal, date, num_available_before) VALUES (?, ?, ?);", [goalId, selectedDate, daysBeforeDeadline], () => {}, (t, error) => {
-                                        console.log(error);
-                                    });
-                                    break;
-                                case "month":
-                                    tx.executeSql("INSERT INTO GoalMonth(id_goal, day, num_available_before) VALUES (?, ?, ?);", [goalId, monthSelectedDay, daysBeforeDeadline], () => {}, (t, error) => {
-                                        console.log(error);
-                                    });
-                                    break;
-                                case "week":
-                                    for (let i = 0; i < weekSelectedDays.length; i++) {
-                                        if (weekSelectedDays[i]) {
-                                            tx.executeSql("INSERT INTO GoalWeek(id_goal, day) VALUES (?, ?);", [goalId, i], () => {}, (t, error) => {
-                                                console.log(error);
-                                            });
-                                        }
-                                    }
-                                    break;
-                                case "custom":
-                                    tx.executeSql("INSERT INTO GoalCustom(id_goal, first_date, num_days_between, num_available_before) VALUES (?, ?, ?, ?);", [goalId, monthSelectedDay, customDaysBetween, daysBeforeDeadline], () => {}, (t, error) => {
-                                        console.log(error);
-                                    });
-                                    break;
-                                default:
-                                    break;
-                            }
+                            
                         });
                     }
                     storeDispatch({ type: "TOGGLE_FORCE_UPDATE" });
