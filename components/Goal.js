@@ -2,13 +2,15 @@ import React from "react";
 import {StyleSheet, TouchableOpacity, Text } from "react-native";
 
 
-const Goal = ({ title }) => {
+const Goal = ({ title, color }) => {
     return (
         <TouchableOpacity 
-            style={ styles.container }
+            style={[styles.container, {
+                borderLeftColor: color,
+            }]}
             activeOpacity={ 0.8 }
         >
-            <Text>{ title }</Text>
+            <Text style={{ color: "black"}}>{ title }</Text>
             <Text>Yes</Text>
         </TouchableOpacity>
     );
@@ -16,7 +18,8 @@ const Goal = ({ title }) => {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "red",
+        borderLeftWidth: 12,
+        backgroundColor: "#ebebeb",
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",

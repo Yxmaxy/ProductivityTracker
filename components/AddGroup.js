@@ -3,12 +3,13 @@ import { StyleSheet, Text, TextInput, Pressable, KeyboardAvoidingView, View } fr
 import * as SQLite from "expo-sqlite";
 import ColorPicker from 'react-native-wheel-color-picker';
 import { Context } from './Store';
+import Goal from './Goal';
 
 const db = SQLite.openDatabase("db.db");
 
 const AddGroup = ({ navigation }) => {
     const [name, setName] = useState("");
-    const [selectedColor, setSelectedColor] = useState("#db643a");
+    const [selectedColor, setSelectedColor] = useState("#00afef");
 
     const [, storeDispatch] = useContext(Context);
 
@@ -31,15 +32,10 @@ const AddGroup = ({ navigation }) => {
                 swatches={true}
                 discrete={true}
             />
-            <Text
-                style={{
-                    color: selectedColor,
-                    fontSize: 22,
-                    fontWeight: '500',
-                    marginTop: 20,
-                }}>
-                    Selected color: {selectedColor}
-                </Text>
+            <Text style={{ color: "black", marginTop: 20 }}>
+                    Goal preview:
+            </Text>
+            <Goal title="Goal" color={selectedColor} />
 
             <Pressable 
                 style={styles.submitButton}

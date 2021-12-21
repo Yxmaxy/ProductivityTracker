@@ -75,7 +75,7 @@ const TodayScreen = ({ navigation }) => {
             <ScrollView>
                 <GoalGroup title="Weekly goals">
                     {goalsWeek.map(goal => {
-                        return (<Goal key={goal.id_goal} title={goal.name} />);
+                        return (<Goal key={goal.id_goal} title={goal.name} color={goal.color} />);
                     })}
                 </GoalGroup>
                 <GoalGroup title="Monthly goals">
