@@ -3,11 +3,11 @@ import Constants from 'expo-constants';
 
 //* Common
 export const colors = {
-    colorPop1: "#F06449",
-    colorPop2: "#5BC3EB",
-    colorPop3: "#456990",
-    colorBase1: "#EDE6E3",
-    colorBase2: "#DADAD9",
+    colorPopRed: "#F06449",
+    colorPopBlue: "#5BC3EB",
+    colorPopDarkBlue: "#456990",
+    colorBaseLight: "#EDE6E3",
+    colorBaseDark: "#DADAD9",
     colorText: "#36382E",
 }
 
@@ -64,7 +64,7 @@ export const floatingButtonStyles = StyleSheet.create({
         position: "absolute",
         bottom: 10,
         right: 10,
-        backgroundColor: "chocolate",
+        backgroundColor: colors.colorPopDarkBlue,
         justifyContent: "center",
         alignItems: "center",
     }
@@ -80,7 +80,7 @@ export const goalStyles = StyleSheet.create({
         margin: 2,
         marginTop: 0,
         borderLeftWidth: 12,
-        backgroundColor: "#ebebeb",
+        backgroundColor: colors.colorBaseLight
     },
 });
 

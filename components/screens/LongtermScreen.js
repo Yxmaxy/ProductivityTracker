@@ -8,15 +8,19 @@ import { flexStyles } from "../common/styles";
 import { db } from "../common/globals";
 
 const LongtermScreen = ({ navigation }) => {
-    const [longterm, setLongterm] = useState([]);
+    const [goals, setGoals] = useState([]);
     const [smallerGoals, setSmallerGoals] = useState({});
 
     const [storeState, ] = useContext(Context);
 
     useEffect(() => {
         db.transaction((tx) => {
-            tx.executeSql("SELECT * FROM Goals WHERE is_longterm;", [], (_, { rows }) => {
-                setLongterm(rows._array);
+            tx.executeSql(`
+                SELECT g.*, color
+                FROM Goals AS g JOIN GoalGroups USING(id_group)
+                WHERE is_longterm;
+            `, [], (_, { rows }) => {
+                setGoals(rows._array);
             }, (t, error) => {
                 console.log(error);
             });
@@ -25,7 +29,7 @@ const LongtermScreen = ({ navigation }) => {
 
     useEffect(() => {
         var goalIDs = [];
-        longterm.forEach(goal => {
+        goals.forEach(goal => {
             goalIDs.push(goal.id_goal);
         });
         db.transaction((tx) => {
@@ -39,17 +43,26 @@ const LongtermScreen = ({ navigation }) => {
                 console.log(error);
             });
         });
-    }, [longterm]);
+    }, [goals]);
 
     return (
         <>
             <ScrollView style={ flexStyles.container }>
-                {longterm.map(longterm => {
+                {goals.map(goal => {
                     return (
-                        <View key={longterm.id_goal}>
-                            <Goal title={longterm.name} />
-                            {smallerGoals[longterm.id_goal] && smallerGoals[longterm.id_goal].map(smallerGoal => {
-                                return <SmallerGoal key={smallerGoal.id_smaller_goal} title={smallerGoal.name} />
+                        <View key={goal.id_goal}>
+                            <Goal
+                                id={goal.id_goal}
+                                title={goal.name}
+                                color={goal.color}
+                            />
+                            {smallerGoals[goal.id_goal] && smallerGoals[goal.id_goal].map(smallerGoal => {
+                                return (<Goal
+                                    id={smallerGoal.id_goal}
+                                    title={smallerGoal.name}
+                                    color={goal.color}
+                                    isSmall={true}
+                                />)
                             })}
                         </View>
                     );

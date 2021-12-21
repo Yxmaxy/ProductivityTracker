@@ -5,7 +5,7 @@ import TodayScreen from '../screens/TodayScreen';
 import LongtermScreen from '../screens/LongtermScreen';
 import RemindersScreen from '../screens/RemindersScreen';
 import MonthScreen from '../screens/MonthScreen';
-import { tabNavScreenStyles } from '../common/styles';
+import { tabNavScreenStyles, colors } from '../common/styles';
 
 const Tab = createMaterialTopTabNavigator();
 const TabNavScreen = () => {
@@ -24,16 +24,14 @@ const TabNavScreen = () => {
                 initialRouteName={"Today"}
                 screenOptions={{
                     tabBarItemStyle: {
-                        backgroundColor: "red"
+                        backgroundColor: colors.colorPopBlue
                     },
                     tabBarLabelStyle: { fontSize: 11 },
                     tabBarStyle: { backgroundColor: 'dodgerblue' },
                     tabBarInactiveTintColor: "black",
                     tabBarPressColor: "rgba(255, 255, 255, 0.3)",
-                    tabBarActiveTintColor: "yellow",
-                    tabBarIndicatorStyle: {
-                        backgroundColor: "yellow"
-                    },
+                    tabBarActiveTintColor: colors.colorPopDarkBlue,
+                    tabBarInactiveTintColor: colors.colorText,
                 }}
             >
                 <Tab.Screen name="Today" component={ TodayScreen } />

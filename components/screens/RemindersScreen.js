@@ -7,13 +7,13 @@ import { flexStyles } from "../common/styles";
 import { db } from "../common/globals";
 
 const RemindersScreen = ({ navigation }) => {
-    const [reminders, setReminders] = useState([]);
+    const [goals, setGoals] = useState([]);
     const [storeState, ] = useContext(Context);
 
     useEffect(() => {
         db.transaction((tx) => {
             tx.executeSql("SELECT * FROM Reminders;", [], (_, { rows }) => {
-                setReminders(rows._array);
+                setGoals(rows._array);
             }, (t, error) => {
                 console.log(error);
             });
@@ -23,8 +23,12 @@ const RemindersScreen = ({ navigation }) => {
     return(
         <>
             <ScrollView style={ flexStyles.container }>
-                {reminders.map(reminder => {
-                    return (<Goal key={reminder.id_reminder} title={reminder.name} />);
+                {goals.map(goal => {
+                    return (<Goal 
+                        key={goal.id_goal}
+                        id={goal.id_goal}
+                        title={goal.name}
+                    />);
                 })}
             </ScrollView>
             <FloatingButton text="+" navigation={navigation} navigateTo="AddReminder" />
