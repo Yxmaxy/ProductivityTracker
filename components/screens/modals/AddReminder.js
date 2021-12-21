@@ -1,11 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { View, TouchableOpacity, Platform, Text, TextInput, Pressable, Button } from 'react-native';
+import { View, TouchableOpacity, Platform, Text, TextInput, Pressable } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import * as SQLite from "expo-sqlite";
 import { Context } from '../../common/Store';
 import { flexContainer, formStyles } from '../../common/styles';
-
-const db = SQLite.openDatabase("db.db");
+import { db } from '../../common/globals';
 
 const AddReminder = ({ navigation }) => {
     const [name, onChangeName] = useState("");

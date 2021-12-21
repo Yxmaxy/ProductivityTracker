@@ -1,12 +1,10 @@
 import React, { useContext, useState } from 'react';
 import { Text, TextInput, Pressable, KeyboardAvoidingView, View } from 'react-native';
-import * as SQLite from "expo-sqlite";
 import ColorPicker from 'react-native-wheel-color-picker';
 import { Context } from '../../common/Store';
 import Goal from '../../Goal';
 import { flexContainer, formStyles } from '../../common/styles';
-
-const db = SQLite.openDatabase("db.db");
+import { db } from '../../common/globals';
 
 const AddGroup = ({ navigation }) => {
     const [name, setName] = useState("");

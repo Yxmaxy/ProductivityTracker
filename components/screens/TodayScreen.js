@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import * as SQLite from "expo-sqlite";
 import { ScrollView } from "react-native";
 import Goal from "../Goal";
 import FloatingButton from "../FloatingButton";
 import { Context } from "../common/Store";
 import GoalGroup from "../GoalGroup";
-
-const db = SQLite.openDatabase("db.db");
+import { db } from "../common/globals";
 
 const TodayScreen = ({ navigation }) => {
     const [goalsWeek, setGoalsWeek] = useState([]);

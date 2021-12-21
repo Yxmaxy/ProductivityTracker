@@ -1,12 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import * as SQLite from "expo-sqlite";
-import { StyleSheet, ScrollView, Text } from "react-native";
+import { ScrollView } from "react-native";
 import FloatingButton from "../FloatingButton";
 import Goal from "../Goal";
 import { Context } from "../common/Store";
 import { flexContainer } from "../common/styles";
-
-const db = SQLite.openDatabase("db.db");
+import { db } from "../common/globals";
 
 const RemindersScreen = ({ navigation }) => {
     const [reminders, setReminders] = useState([]);

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { TouchableOpacity, Text } from "react-native";
 import Checkbox from "expo-checkbox";
-import * as SQLite from "expo-sqlite";
 import { goalStyles } from "./common/styles";
-
-const db = SQLite.openDatabase("db.db");
+import { db } from "./common/globals";
 
 const Goal = ({ id, title, color }) => {
     const [isDone, setIsDone] = useState(false);

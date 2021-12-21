@@ -1,13 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Text, TextInput, Pressable, KeyboardAvoidingView, Button, View, TouchableOpacity } from 'react-native';
-import * as SQLite from "expo-sqlite";
 import { Picker } from '@react-native-picker/picker';
 import Checkbox from 'expo-checkbox';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Context } from '../../common/Store';
 import { flexContainer, formStyles, addGoalStyles } from '../../common/styles';
-
-const db = SQLite.openDatabase("db.db");
+import { db } from '../../common/globals';
 
 const AddGoal = ({ route, navigation }) => {
     const [name, setName] = useState("");

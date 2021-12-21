@@ -1,13 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
-import * as SQLite from "expo-sqlite";
 import { ScrollView, View } from "react-native";
 import Goal from "../Goal";
 import FloatingButton from "../FloatingButton";
 import { Context } from "../common/Store";
 import SmallerGoal from "../SmallerGoal";
 import { flexContainer } from "../common/styles";
-
-const db = SQLite.openDatabase("db.db");
+import { db } from "../common/globals";
 
 const LongtermScreen = ({ navigation }) => {
     const [longterm, setLongterm] = useState([]);
