@@ -75,22 +75,42 @@ const TodayScreen = ({ navigation }) => {
             <ScrollView>
                 <GoalGroup title="Weekly goals">
                     {goalsWeek.map(goal => {
-                        return (<Goal key={goal.id_goal} title={goal.name} color={goal.color} />);
+                        return (<Goal 
+                            key={goal.id_goal}
+                            id={goal.id_goal}
+                            title={goal.name}
+                            color={goal.color}
+                        />);
                     })}
                 </GoalGroup>
                 <GoalGroup title="Monthly goals">
                     {goalsMonth.map(goal => {
-                        return (<Goal key={goal.id_goal} title={goal.name} />);
+                        return (<Goal 
+                            key={goal.id_goal}
+                            id={goal.id_goal}
+                            title={goal.name}
+                            color={goal.color}
+                        />);
                     })}
                 </GoalGroup>
                 <GoalGroup title="Yearly goals">
                     {goalsYear.map(goal => {
-                        return (<Goal key={goal.id_goal} title={goal.name} />);
+                        return (<Goal 
+                            key={goal.id_goal}
+                            id={goal.id_goal}
+                            title={goal.name}
+                            color={goal.color}
+                        />);
                     })}
                 </GoalGroup>
                 <GoalGroup title="Custom goals">
                     {goalsCustom.map(goal => {
-                        return (<Goal key={goal.id_goal} title={goal.name} />);
+                        return (<Goal 
+                            key={goal.id_goal}
+                            id={goal.id_goal}
+                            title={goal.name}
+                            color={goal.color}
+                        />);
                     })}
                 </GoalGroup>
             </ScrollView>

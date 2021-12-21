@@ -20,10 +20,6 @@ const App = () => {
                 );`
             );
             tx.executeSql(
-                `INSERT INTO GoalGroups(id_group, name, color)
-                VALUES (1, "Default", "#000000");`
-            );
-            tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS Goals (
                     id_goal INTEGER PRIMARY KEY AUTOINCREMENT,
                     name VARCHAR(100),
@@ -50,7 +46,7 @@ const App = () => {
                 );`
             );
             tx.executeSql(
-                `CREATE TABLE GoalYear (
+                `CREATE TABLE IF NOT EXISTS GoalYear (
                     id_goal INTEGER,
                     date DATE,
                     num_available_before INTEGER,
@@ -59,7 +55,7 @@ const App = () => {
                 );`
             );
             tx.executeSql(
-                `CREATE TABLE GoalMonth (
+                `CREATE TABLE IF NOT EXISTS GoalMonth (
                     id_goal INTEGER,
                     day INTEGER,
                     num_available_before INTEGER,
@@ -68,7 +64,7 @@ const App = () => {
                 );`
             );
             tx.executeSql(
-                `CREATE TABLE GoalWeek (
+                `CREATE TABLE IF NOT EXISTS GoalWeek (
                     id_goal INTEGER,
                     day INTEGER,
                     PRIMARY KEY(id_goal, day),
@@ -76,7 +72,7 @@ const App = () => {
                 );`
             );
             tx.executeSql(
-                `CREATE TABLE GoalCustom (
+                `CREATE TABLE IF NOT EXISTS GoalCustom (
                     id_goal INTEGER,
                     first_date DATE,
                     num_days_between INTEGER,
@@ -85,7 +81,21 @@ const App = () => {
                     FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
                 );`
             );
-            // 15 % num_days_between == 0 or 15 % num_days_between >= num_days_between - num_days_before
+            tx.executeSql(
+                `CREATE TABLE IF NOT EXISTS GoalFinished (
+                    id_goal INTEGER,
+                    date_finished DATE,
+                    PRIMARY KEY(id_goal, date_finished),
+                    FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+                );`
+            );
+        });
+        // insert some default values into tables
+        db.transaction((tx) => {
+            tx.executeSql(
+                `INSERT INTO GoalGroups(id_group, name, color)
+                VALUES (1, "Default", "#000000");`
+            );
         });
     }, [])
 
