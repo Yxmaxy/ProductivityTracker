@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
 import { StyleSheet, ScrollView, Text } from "react-native";
-import FloatingButton from "./FloatingButton";
-import Goal from "./Goal";
-import { Context } from "./Store";
+import FloatingButton from "../FloatingButton";
+import Goal from "../Goal";
+import { Context } from "../common/Store";
+import { flexContainer } from "../common/styles";
 
 const db = SQLite.openDatabase("db.db");
 
@@ -23,7 +24,7 @@ const RemindersScreen = ({ navigation }) => {
 
     return(
         <>
-            <ScrollView style={ styles.container }>
+            <ScrollView style={ flexContainer.container }>
                 {reminders.map(reminder => {
                     return (<Goal key={reminder.id_reminder} title={reminder.name} />);
                 })}
@@ -33,9 +34,4 @@ const RemindersScreen = ({ navigation }) => {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    }
-});
 export default RemindersScreen;

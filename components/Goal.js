@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import {StyleSheet, TouchableOpacity, Text } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
 import Checkbox from "expo-checkbox";
 import * as SQLite from "expo-sqlite";
+import { goalStyles } from "./common/styles";
 
 const db = SQLite.openDatabase("db.db");
 
@@ -31,7 +32,7 @@ const Goal = ({ id, title, color }) => {
 
     return (
         <TouchableOpacity
-            style={[styles.container, {
+            style={[goalStyles.goal, {
                 borderLeftColor: color,
             }]}
             activeOpacity={ 0.8 }
@@ -47,18 +48,5 @@ const Goal = ({ id, title, color }) => {
         </TouchableOpacity>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        borderLeftWidth: 12,
-        backgroundColor: "#ebebeb",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        padding: 10,
-        margin: 2,
-        marginTop: 0,
-    },
-});
 
 export default Goal;

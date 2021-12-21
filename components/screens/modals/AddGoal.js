@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, TextInput, Pressable, KeyboardAvoidingView, Button, View, TouchableOpacity } from 'react-native';
+import { Text, TextInput, Pressable, KeyboardAvoidingView, Button, View, TouchableOpacity } from 'react-native';
 import * as SQLite from "expo-sqlite";
 import { Picker } from '@react-native-picker/picker';
 import Checkbox from 'expo-checkbox';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Context } from './Store';
+import { Context } from '../../common/Store';
+import { flexContainer, formStyles, addGoalStyles } from '../../common/styles';
 
 const db = SQLite.openDatabase("db.db");
 
@@ -36,15 +37,15 @@ const AddGoal = ({ route, navigation }) => {
     }, [storeState.forceUpdate]);
 
     return (
-        <KeyboardAvoidingView style={ styles.container }>
+        <KeyboardAvoidingView style={ flexContainer.container }>
             <Text>Name</Text>
             <TextInput
-                style= {styles.textInput}
+                style= {formStyles.textInput}
                 value={name}
                 onChangeText={ setName }
             />
             <Text>Group</Text>
-            <View style={ styles.alignedRow }>
+            <View style={ formStyles.alignedRow }>
                 <Picker
                     style={{
                         flex: 1,
@@ -67,11 +68,13 @@ const AddGoal = ({ route, navigation }) => {
                     }}
                 />
             </View>
-            <Text>Is longterm?</Text>
-            <Checkbox 
-                value={isLongterm}
-                onValueChange={setIsLongterm}
-            />
+            <View style={formStyles.alignedRow}>
+                <Text>Is longterm?</Text>
+                <Checkbox 
+                    value={isLongterm}
+                    onValueChange={setIsLongterm}
+                />
+            </View>
             { !isLongterm && <View>
                 <Text>Frequency</Text>
                 <Picker
@@ -87,7 +90,7 @@ const AddGoal = ({ route, navigation }) => {
 
                 { selectedFrequency == "week" && <>
                 <Text>Select days</Text>
-                    <View style={ styles.weekContainer }>
+                    <View style={ addGoalStyles.weekContainer }>
                         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => {
                             return (
                                 <View key={i}>
@@ -108,9 +111,9 @@ const AddGoal = ({ route, navigation }) => {
 
                 { selectedFrequency == "month" && <>
                     <Text>Select day in month</Text>
-                    <View style={ styles.alignedRow }>
+                    <View style={ formStyles.alignedRow }>
                         <TextInput 
-                            style={[ styles.textInput, { flex: 1 } ]}
+                            style={[ formStyles.textInput, { flex: 1 } ]}
                             value={ monthSelectedDay.toString() }
                             onChangeText={value => {
                                 if (value >= 0 && value <= 31)
@@ -134,9 +137,9 @@ const AddGoal = ({ route, navigation }) => {
                         <Text>{`${calendarSelectedDay.getDate()}. ${(calendarSelectedDay.getMonth() + 1)}. ${calendarSelectedDay.getFullYear()}`}</Text>
                     </TouchableOpacity>
                     <Text>Select number of days between goals</Text>
-                    <View style={ styles.alignedRow }>
+                    <View style={ formStyles.alignedRow }>
                         <TextInput 
-                            style={[ styles.textInput, { flex: 1 } ]}
+                            style={[ formStyles.textInput, { flex: 1 } ]}
                             value={ customDaysBetween.toString() }
                             onChangeText={value => {
                                 if (value >= 0 && value !== "")
@@ -158,9 +161,9 @@ const AddGoal = ({ route, navigation }) => {
                 
                 { selectedFrequency != "week" && <>
                     <Text>Days available before deadline</Text>
-                    <View style={ styles.alignedRow }>
+                    <View style={ formStyles.alignedRow }>
                         <TextInput 
-                            style={[ styles.textInput, { flex: 1 } ]}
+                            style={[ formStyles.textInput, { flex: 1 } ]}
                             value={ daysBeforeDeadline.toString() }
                             onChangeText={ value => {
                                 if (value !== "")
@@ -181,9 +184,9 @@ const AddGoal = ({ route, navigation }) => {
                 </>}
             </View>}
             <Text>Smaller goals</Text>
-            <View style={ styles.alignedRow }>
+            <View style={ formStyles.alignedRow }>
                 <TextInput
-                    style= {[ styles.textInput , {flex: 1}]}
+                    style= {[ formStyles.textInput , {flex: 1}]}
                     value={ smallerGoalName }
                     onChangeText={ setSmallerGoalName }
                     placeholder="Enter name of smaller goal"
@@ -213,7 +216,7 @@ const AddGoal = ({ route, navigation }) => {
             )}
 
             <Pressable 
-                style={styles.submitButton}
+                style={formStyles.submitButton}
                 onPress={() => {
                     if (isLongterm) {
                         db.transaction((tx) => {
@@ -291,7 +294,7 @@ const AddGoal = ({ route, navigation }) => {
 
 const SmallerGoal = ({ id, name, smallerGoals, setSmallerGoals }) => {
     return (
-        <View style={ styles.inputRow } id={ id }>
+        <View style={ formStyles.alignedRow } id={ id }>
             <Text>{ name }</Text>
             <Button title="Remove" onPress={() => {
                 setSmallerGoals(smallerGoals.filter(item => item !== name));
@@ -299,39 +302,5 @@ const SmallerGoal = ({ id, name, smallerGoals, setSmallerGoals }) => {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    textInput: {
-        backgroundColor: "white",
-        borderWidth: 1,
-        borderColor: "black",
-    },
-    submitButton: {
-        backgroundColor: "dodgerblue",
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
-        alignItems: "center",
-        padding: 10,
-    },
-    inputRow: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between"
-    },
-    alignedRow: {
-        display: "flex",
-        flexDirection: "row",
-    },
-    weekContainer: {
-        display: "flex",
-        flexWrap: "wrap",
-        flexDirection: "row",
-        justifyContent: "space-between",
-    }
-});
 
 export default AddGoal;

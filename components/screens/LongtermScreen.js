@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
-import { StyleSheet, ScrollView, View } from "react-native";
-import Goal from "./Goal";
-import FloatingButton from "./FloatingButton";
-import { Context } from "./Store";
-import SmallerGoal from "./SmallerGoal";
+import { ScrollView, View } from "react-native";
+import Goal from "../Goal";
+import FloatingButton from "../FloatingButton";
+import { Context } from "../common/Store";
+import SmallerGoal from "../SmallerGoal";
+import { flexContainer } from "../common/styles";
 
 const db = SQLite.openDatabase("db.db");
 
@@ -44,7 +45,7 @@ const LongtermScreen = ({ navigation }) => {
 
     return (
         <>
-            <ScrollView style={ styles.container }>
+            <ScrollView style={ flexContainer.container }>
                 {longterm.map(longterm => {
                     return (
                         <View key={longterm.id_goal}>
@@ -60,11 +61,5 @@ const LongtermScreen = ({ navigation }) => {
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    }
-});
 
 export default LongtermScreen;

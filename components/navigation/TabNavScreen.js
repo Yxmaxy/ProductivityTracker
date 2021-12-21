@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import Constants from 'expo-constants';
+import { Text, View } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import TodayScreen from '../TodayScreen';
-import LongtermScreen from '../LongtermScreen';
-import RemindersScreen from '../RemindersScreen';
-import MonthScreen from '../MonthScreen';
+import TodayScreen from '../screens/TodayScreen';
+import LongtermScreen from '../screens/LongtermScreen';
+import RemindersScreen from '../screens/RemindersScreen';
+import MonthScreen from '../screens/MonthScreen';
+import { tabNavScreenStyles } from '../common/styles';
 
 const Tab = createMaterialTopTabNavigator();
 const TabNavScreen = () => {
@@ -18,11 +18,14 @@ const TabNavScreen = () => {
     }, []);
 
     return (
-        <View style={ styles.container }>
-            <Text style={ styles.dateText }>{date}</Text>
+        <View style={ tabNavScreenStyles.container }>
+            <Text style={ tabNavScreenStyles.dateText }>{date}</Text>
             <Tab.Navigator 
                 initialRouteName={"Today"}
                 screenOptions={{
+                    tabBarItemStyle: {
+                        backgroundColor: "red"
+                    },
                     tabBarLabelStyle: { fontSize: 11 },
                     tabBarStyle: { backgroundColor: 'dodgerblue' },
                     tabBarInactiveTintColor: "black",
@@ -41,19 +44,5 @@ const TabNavScreen = () => {
         </View>
     );
 }
-
-
-const styles = StyleSheet.create({
-    dateText: {
-        backgroundColor: "lime",
-        textAlign: "right",
-        padding: 10,
-        fontWeight: "bold",
-    },
-    container: {
-        flex: 1,
-        paddingTop: Constants.statusBarHeight,
-    },
-});
 
 export default TabNavScreen;

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import * as SQLite from 'expo-sqlite';
 import RootStackScreen from './components/navigation/RootStackScreen';
-import Store from './components/Store';
+import Store from './components/common/Store';
 
 //* Database
 const db = SQLite.openDatabase("db.db");

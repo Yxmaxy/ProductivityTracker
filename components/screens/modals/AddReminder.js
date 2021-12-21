@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, View, TouchableOpacity, Platform, Text, TextInput, Pressable, Button } from 'react-native';
+import { View, TouchableOpacity, Platform, Text, TextInput, Pressable, Button } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as SQLite from "expo-sqlite";
-import { Context } from './Store';
+import { Context } from '../../common/Store';
+import { flexContainer, formStyles } from '../../common/styles';
 
 const db = SQLite.openDatabase("db.db");
 
@@ -44,12 +45,12 @@ const AddReminder = ({ navigation }) => {
     };
 
     return (
-        <View style={ styles.container }>
+        <View style={ flexContainer.container }>
             <Text>Name</Text>
             <TextInput
                 onChangeText={ onChangeName }
                 value={name}
-                style= {styles.textInput}
+                style= {formStyles.textInput}
             />
             <Text>Notification time</Text>
             <TouchableOpacity onPress={showDatepicker}>
@@ -67,7 +68,7 @@ const AddReminder = ({ navigation }) => {
                 />
             )}
             <Pressable 
-                style={styles.submitButton}
+                style={formStyles.submitButton}
                 onPress={() => {
                     const selectedDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + (time.getHours() - 2) + ":" + time.getMinutes();
                     db.transaction((tx) => {
@@ -84,29 +85,5 @@ const AddReminder = ({ navigation }) => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    textInput: {
-        backgroundColor: "white",
-        borderWidth: 1,
-        borderColor: "black",
-    },
-    submitButton: {
-        backgroundColor: "dodgerblue",
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
-        alignItems: "center",
-        padding: 10,
-    },
-    inputRow: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between"
-    }
-});
 
 export default AddReminder;

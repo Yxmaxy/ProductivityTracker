@@ -1,9 +1,9 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import TabNavScreen from './TabNavScreen';
-import AddReminder from '../AddReminder';
-import AddGoal from '../AddGoal';
-import AddGroup from '../AddGroup';
+import AddReminder from '../screens/modals/AddReminder';
+import AddGoal from '../screens/modals/AddGoal';
+import AddGroup from '../screens/modals/AddGroup';
 
 const RootStack = createStackNavigator();
 const RootStackScreen = () => {

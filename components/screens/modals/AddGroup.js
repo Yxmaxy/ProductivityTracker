@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, TextInput, Pressable, KeyboardAvoidingView, View } from 'react-native';
+import { Text, TextInput, Pressable, KeyboardAvoidingView, View } from 'react-native';
 import * as SQLite from "expo-sqlite";
 import ColorPicker from 'react-native-wheel-color-picker';
-import { Context } from './Store';
-import Goal from './Goal';
+import { Context } from '../../common/Store';
+import Goal from '../../Goal';
+import { flexContainer, formStyles } from '../../common/styles';
 
 const db = SQLite.openDatabase("db.db");
 
@@ -14,10 +15,10 @@ const AddGroup = ({ navigation }) => {
     const [, storeDispatch] = useContext(Context);
 
     return (
-        <KeyboardAvoidingView style={ styles.container }>
+        <KeyboardAvoidingView style={ flexContainer.container }>
             <Text>Name</Text>
             <TextInput
-                style= {styles.textInput}
+                style= {formStyles.textInput}
                 value={name}
                 onChangeText={ setName }
             />
@@ -33,12 +34,12 @@ const AddGroup = ({ navigation }) => {
                 discrete={true}
             />
             <Text style={{ color: "black", marginTop: 20 }}>
-                    Goal preview:
+                Goal preview:
             </Text>
             <Goal title="Goal" color={selectedColor} />
 
             <Pressable 
-                style={styles.submitButton}
+                style={formStyles.submitButton}
                 onPress={() => {
                     db.transaction((tx) => {
                         tx.executeSql("INSERT INTO GoalGroups(name, color) VALUES (?, ?);", [name, selectedColor], () => {}, (t, error) => {
@@ -54,29 +55,5 @@ const AddGroup = ({ navigation }) => {
         </KeyboardAvoidingView>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    textInput: {
-        backgroundColor: "white",
-        borderWidth: 1,
-        borderColor: "black",
-    },
-    submitButton: {
-        backgroundColor: "dodgerblue",
-        position: "absolute",
-        bottom: 0,
-        width: "100%",
-        alignItems: "center",
-        padding: 10,
-    },
-    inputRow: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between"
-    }
-});
 
 export default AddGroup;

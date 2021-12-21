@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import * as SQLite from "expo-sqlite";
-import { StyleSheet, ScrollView } from "react-native";
-import Goal from "./Goal";
-import FloatingButton from "./FloatingButton";
-import { Context } from "./Store";
-import GoalGroup from "./GoalGroup";
+import { ScrollView } from "react-native";
+import Goal from "../Goal";
+import FloatingButton from "../FloatingButton";
+import { Context } from "../common/Store";
+import GoalGroup from "../GoalGroup";
 
 const db = SQLite.openDatabase("db.db");
 
@@ -118,11 +118,5 @@ const TodayScreen = ({ navigation }) => {
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    }
-});
 
 export default TodayScreen;
