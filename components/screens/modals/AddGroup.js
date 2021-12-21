@@ -3,7 +3,7 @@ import { Text, TextInput, Pressable, KeyboardAvoidingView, View } from 'react-na
 import ColorPicker from 'react-native-wheel-color-picker';
 import { Context } from '../../common/Store';
 import Goal from '../../Goal';
-import { flexContainer, formStyles } from '../../common/styles';
+import { flexStyles, formStyles } from '../../common/styles';
 import { db } from '../../common/globals';
 
 const AddGroup = ({ navigation }) => {
@@ -13,7 +13,7 @@ const AddGroup = ({ navigation }) => {
     const [, storeDispatch] = useContext(Context);
 
     return (
-        <KeyboardAvoidingView style={ flexContainer.container }>
+        <KeyboardAvoidingView style={ flexStyles.container }>
             <Text>Name</Text>
             <TextInput
                 style= {formStyles.textInput}

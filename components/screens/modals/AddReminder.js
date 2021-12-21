@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { View, TouchableOpacity, Platform, Text, TextInput, Pressable } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Context } from '../../common/Store';
-import { flexContainer, formStyles } from '../../common/styles';
+import { flexStyles, formStyles } from '../../common/styles';
 import { db } from '../../common/globals';
 
 const AddReminder = ({ navigation }) => {
@@ -43,7 +43,7 @@ const AddReminder = ({ navigation }) => {
     };
 
     return (
-        <View style={ flexContainer.container }>
+        <View style={ flexStyles.container }>
             <Text>Name</Text>
             <TextInput
                 onChangeText={ onChangeName }

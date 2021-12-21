@@ -3,7 +3,7 @@ import { ScrollView } from "react-native";
 import FloatingButton from "../FloatingButton";
 import Goal from "../Goal";
 import { Context } from "../common/Store";
-import { flexContainer } from "../common/styles";
+import { flexStyles } from "../common/styles";
 import { db } from "../common/globals";
 
 const RemindersScreen = ({ navigation }) => {
@@ -22,7 +22,7 @@ const RemindersScreen = ({ navigation }) => {
 
     return(
         <>
-            <ScrollView style={ flexContainer.container }>
+            <ScrollView style={ flexStyles.container }>
                 {reminders.map(reminder => {
                     return (<Goal key={reminder.id_reminder} title={reminder.name} />);
                 })}

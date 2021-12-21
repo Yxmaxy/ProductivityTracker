@@ -11,10 +11,15 @@ export const colors = {
     colorText: "#36382E",
 }
 
-export const flexContainer = StyleSheet.create({
+export const flexStyles = StyleSheet.create({
     container: {
         flex: 1
-    }
+    },
+    alignedRow: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between"
+    },
 });
 
 export const formStyles = StyleSheet.create({
@@ -30,12 +35,6 @@ export const formStyles = StyleSheet.create({
         width: "100%",
         bottom: 0,
         padding: 10,
-        
-    },
-    alignedRow: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between"
     },
 });
 
@@ -53,16 +52,6 @@ export const tabNavScreenStyles = StyleSheet.create({
         flex: 1,
         paddingTop: Constants.statusBarHeight,
     },
-});
-
-// AddGoal
-export const addGoalStyles = StyleSheet.create({
-    weekContainer: {
-        display: "flex",
-        flexWrap: "wrap",
-        flexDirection: "row",
-        justifyContent: "space-between",
-    }
 });
 
 //* Components

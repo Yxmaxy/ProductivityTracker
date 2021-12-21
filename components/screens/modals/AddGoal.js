@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import Checkbox from 'expo-checkbox';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Context } from '../../common/Store';
-import { flexContainer, formStyles, addGoalStyles } from '../../common/styles';
+import { flexStyles, formStyles } from '../../common/styles';
 import { db } from '../../common/globals';
 
 const AddGoal = ({ route, navigation }) => {
@@ -35,7 +35,7 @@ const AddGoal = ({ route, navigation }) => {
     }, [storeState.forceUpdate]);
 
     return (
-        <KeyboardAvoidingView style={ flexContainer.container }>
+        <KeyboardAvoidingView style={ flexStyles.container }>
             <Text>Name</Text>
             <TextInput
                 style= {formStyles.textInput}
@@ -43,7 +43,7 @@ const AddGoal = ({ route, navigation }) => {
                 onChangeText={ setName }
             />
             <Text>Group</Text>
-            <View style={ formStyles.alignedRow }>
+            <View style={ flexStyles.alignedRow }>
                 <Picker
                     style={{
                         flex: 1,
@@ -66,7 +66,7 @@ const AddGoal = ({ route, navigation }) => {
                     }}
                 />
             </View>
-            <View style={formStyles.alignedRow}>
+            <View style={flexStyles.alignedRow}>
                 <Text>Is longterm?</Text>
                 <Checkbox 
                     value={isLongterm}
@@ -88,7 +88,7 @@ const AddGoal = ({ route, navigation }) => {
 
                 { selectedFrequency == "week" && <>
                 <Text>Select days</Text>
-                    <View style={ addGoalStyles.weekContainer }>
+                    <View style={ flexStyles.alignedRow }>
                         {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, i) => {
                             return (
                                 <View key={i}>
@@ -109,7 +109,7 @@ const AddGoal = ({ route, navigation }) => {
 
                 { selectedFrequency == "month" && <>
                     <Text>Select day in month</Text>
-                    <View style={ formStyles.alignedRow }>
+                    <View style={ flexStyles.alignedRow }>
                         <TextInput 
                             style={[ formStyles.textInput, { flex: 1 } ]}
                             value={ monthSelectedDay.toString() }
@@ -135,7 +135,7 @@ const AddGoal = ({ route, navigation }) => {
                         <Text>{`${calendarSelectedDay.getDate()}. ${(calendarSelectedDay.getMonth() + 1)}. ${calendarSelectedDay.getFullYear()}`}</Text>
                     </TouchableOpacity>
                     <Text>Select number of days between goals</Text>
-                    <View style={ formStyles.alignedRow }>
+                    <View style={ flexStyles.alignedRow }>
                         <TextInput 
                             style={[ formStyles.textInput, { flex: 1 } ]}
                             value={ customDaysBetween.toString() }
@@ -159,7 +159,7 @@ const AddGoal = ({ route, navigation }) => {
                 
                 { selectedFrequency != "week" && <>
                     <Text>Days available before deadline</Text>
-                    <View style={ formStyles.alignedRow }>
+                    <View style={ flexStyles.alignedRow }>
                         <TextInput 
                             style={[ formStyles.textInput, { flex: 1 } ]}
                             value={ daysBeforeDeadline.toString() }
@@ -182,7 +182,7 @@ const AddGoal = ({ route, navigation }) => {
                 </>}
             </View>}
             <Text>Smaller goals</Text>
-            <View style={ formStyles.alignedRow }>
+            <View style={ flexStyles.alignedRow }>
                 <TextInput
                     style= {[ formStyles.textInput , {flex: 1}]}
                     value={ smallerGoalName }
@@ -292,7 +292,7 @@ const AddGoal = ({ route, navigation }) => {
 
 const SmallerGoal = ({ id, name, smallerGoals, setSmallerGoals }) => {
     return (
-        <View style={ formStyles.alignedRow } id={ id }>
+        <View style={ flexStyles.alignedRow } id={ id }>
             <Text>{ name }</Text>
             <Button title="Remove" onPress={() => {
                 setSmallerGoals(smallerGoals.filter(item => item !== name));

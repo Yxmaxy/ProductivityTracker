@@ -4,7 +4,7 @@ import Goal from "../Goal";
 import FloatingButton from "../FloatingButton";
 import { Context } from "../common/Store";
 import SmallerGoal from "../SmallerGoal";
-import { flexContainer } from "../common/styles";
+import { flexStyles } from "../common/styles";
 import { db } from "../common/globals";
 
 const LongtermScreen = ({ navigation }) => {
@@ -43,7 +43,7 @@ const LongtermScreen = ({ navigation }) => {
 
     return (
         <>
-            <ScrollView style={ flexContainer.container }>
+            <ScrollView style={ flexStyles.container }>
                 {longterm.map(longterm => {
                     return (
                         <View key={longterm.id_goal}>
