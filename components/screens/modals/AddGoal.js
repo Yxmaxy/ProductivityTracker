@@ -219,7 +219,7 @@ const AddGoal = ({ route, navigation }) => {
                     if (isLongterm) {
                         db.transaction((tx) => {
                             // insert goals
-                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, number_of_smaller_goals) VALUES (?, ?, ?, ?);", [name, selectedGroup, true, smallerGoals.length], (_, resultSet) => {
+                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm) VALUES (?, ?, ?);", [name, selectedGroup, true], (_, resultSet) => {
                                 const goalId = resultSet.insertId;
                                 // insert smaller goals
                                 smallerGoals.forEach(smallerGoalName => {
@@ -235,7 +235,7 @@ const AddGoal = ({ route, navigation }) => {
                         const selectedDate = calendarSelectedDay.getFullYear() + "-" + (calendarSelectedDay.getMonth() + 1) + "-" + calendarSelectedDay.getDate();
                         db.transaction((tx) => {
                             // insert goals
-                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, date_started, number_of_smaller_goals) VALUES (?, ?, ?, ?, ?);", [name, selectedGroup, false, currentDate, smallerGoals.length], (_, resultSet) => {
+                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, date_started) VALUES (?, ?, ?, ?);", [name, selectedGroup, false, currentDate], (_, resultSet) => {
                                 const goalId = resultSet.insertId;
                                 // insert smaller goals
                                 smallerGoals.forEach(smallerGoalName => {

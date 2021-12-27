@@ -12,7 +12,6 @@ CREATE TABLE IF NOT EXISTS Goals (
    name VARCHAR(100),
    id_group INTEGER,
    activity_length INTEGER,
-   number_of_smaller_goals INTEGER,
    is_longterm BOOLEAN,
    date_started DATE,
    FOREIGN KEY(id_group) REFERENCES GoalGroups(id_group)
@@ -41,8 +40,8 @@ CREATE TABLE IF NOT EXISTS GoalFinished (
 CREATE TABLE IF NOT EXISTS SmallerGoalFinished (
    id_smaller_goal INTEGER,
    date_finished DATE,
-   PRIMARY KEY(id_goal, date_finished),
-   FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+   PRIMARY KEY(id_smaller_goal, date_finished),
+   FOREIGN KEY(id_smaller_goal) REFERENCES SmallerGoals(id_smaller_goal)
 );
 
 CREATE TABLE IF NOT EXISTS Reminders (

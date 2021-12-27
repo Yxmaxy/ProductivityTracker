@@ -24,7 +24,7 @@ const TodayScreen = ({ navigation }) => {
                     WHERE strftime('%w', 'now') = day
                     AND DATE('now') >= date_started;
                 `, [], (_, { rows }) => {
-                console.log(rows._array);
+                //console.log(rows._array);
                 setGoalsWeek(rows._array);
             }, (t, error) => {
                 console.log(error);
