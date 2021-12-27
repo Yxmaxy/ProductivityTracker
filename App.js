@@ -25,6 +25,7 @@ const App = () => {
                     name VARCHAR(100),
                     id_group INTEGER,
                     activity_length INTEGER,
+                    number_of_smaller_goals INTEGER,
                     is_longterm BOOLEAN,
                     date_started DATE,
                     FOREIGN KEY(id_group) REFERENCES GoalGroups(id_group)
@@ -84,6 +85,14 @@ const App = () => {
             tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS GoalFinished (
                     id_goal INTEGER,
+                    date_finished DATE,
+                    PRIMARY KEY(id_goal, date_finished),
+                    FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)
+                );`
+            );
+            tx.executeSql(
+                `CREATE TABLE IF NOT EXISTS SmallerGoalFinished (
+                    id_smaller_goal INTEGER,
                     date_finished DATE,
                     PRIMARY KEY(id_goal, date_finished),
                     FOREIGN KEY(id_goal) REFERENCES Goals(id_goal)

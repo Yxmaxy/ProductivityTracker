@@ -25,8 +25,8 @@ const RemindersScreen = ({ navigation }) => {
             <ScrollView style={ flexStyles.container }>
                 {goals.map(goal => {
                     return (<Goal 
-                        key={goal.id_goal}
-                        id={goal.id_goal}
+                        key={goal.id_reminder}
+                        id={goal.id_reminder}
                         title={goal.name}
                     />);
                 })}

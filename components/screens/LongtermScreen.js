@@ -3,7 +3,6 @@ import { ScrollView, View } from "react-native";
 import Goal from "../Goal";
 import FloatingButton from "../FloatingButton";
 import { Context } from "../common/Store";
-import SmallerGoal from "../SmallerGoal";
 import { flexStyles } from "../common/styles";
 import { db } from "../common/globals";
 
@@ -55,15 +54,8 @@ const LongtermScreen = ({ navigation }) => {
                                 id={goal.id_goal}
                                 title={goal.name}
                                 color={goal.color}
+                                smallerGoals={smallerGoals[goal.id_goal]}
                             />
-                            {smallerGoals[goal.id_goal] && smallerGoals[goal.id_goal].map(smallerGoal => {
-                                return (<Goal
-                                    id={smallerGoal.id_goal}
-                                    title={smallerGoal.name}
-                                    color={goal.color}
-                                    isSmall={true}
-                                />)
-                            })}
                         </View>
                     );
                 })}

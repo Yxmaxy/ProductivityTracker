@@ -5,7 +5,7 @@ import Checkbox from 'expo-checkbox';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Context } from '../../common/Store';
 import { flexStyles, formStyles } from '../../common/styles';
-import { db } from '../../common/globals';
+import { currentDate, db } from '../../common/globals';
 
 const AddGoal = ({ route, navigation }) => {
     const [name, setName] = useState("");
@@ -206,9 +206,9 @@ const AddGoal = ({ route, navigation }) => {
                     mode={"date"}
                     display="default"
                     onChange={(event, selectedValue) => {
-                        const currentDate = selectedValue || new Date();
+                        const selectedDate = selectedValue || new Date();
                         setShowCalendar(false);
-                        setCalendarSelectedDay(currentDate);
+                        setCalendarSelectedDay(selectedDate);
                     }}
                 />
             )}
@@ -219,7 +219,7 @@ const AddGoal = ({ route, navigation }) => {
                     if (isLongterm) {
                         db.transaction((tx) => {
                             // insert goals
-                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm) VALUES (?, ?, ?);", [name, selectedGroup, true], (_, resultSet) => {
+                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, number_of_smaller_goals) VALUES (?, ?, ?, ?);", [name, selectedGroup, true, smallerGoals.length], (_, resultSet) => {
                                 const goalId = resultSet.insertId;
                                 // insert smaller goals
                                 smallerGoals.forEach(smallerGoalName => {
@@ -232,11 +232,10 @@ const AddGoal = ({ route, navigation }) => {
                             });
                         });
                     } else {
-                        const currentDate = new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + new Date().getDate();
                         const selectedDate = calendarSelectedDay.getFullYear() + "-" + (calendarSelectedDay.getMonth() + 1) + "-" + calendarSelectedDay.getDate();
                         db.transaction((tx) => {
                             // insert goals
-                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, date_started) VALUES (?, ?, ?, ?);", [name, selectedGroup, false, currentDate], (_, resultSet) => {
+                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, date_started, number_of_smaller_goals) VALUES (?, ?, ?, ?, ?);", [name, selectedGroup, false, currentDate, smallerGoals.length], (_, resultSet) => {
                                 const goalId = resultSet.insertId;
                                 // insert smaller goals
                                 smallerGoals.forEach(smallerGoalName => {

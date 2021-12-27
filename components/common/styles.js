@@ -92,6 +92,7 @@ export const goalGroupStyles = StyleSheet.create({
         justifyContent: "space-between",
         display: "flex",
         flexDirection: "row",
+        backgroundColor: colors.colorBaseDark,
     }
 });
 
