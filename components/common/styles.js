@@ -67,6 +67,9 @@ export const floatingButtonStyles = StyleSheet.create({
         backgroundColor: colors.colorPopDarkBlue,
         justifyContent: "center",
         alignItems: "center",
+    },
+    containerWithMargin: {
+        marginBottom: 80,
     }
 });
 

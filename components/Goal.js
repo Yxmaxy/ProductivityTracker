@@ -8,17 +8,22 @@ import { currentDate } from "./common/globals";
 const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, endingDate }) => {
     const [isDone, setIsDone] = useState(false);
     const [isParent, setIsParent] = useState(false);
+/*
+    useEffect(() => {
+        console.log(title + "\t\t\t" + endingDate);
+    }, [endingDate]);
+*/
 
     // set initial value
     useEffect(() => {
-        if (id !== undefined) {
+        if (id !== undefined && endingDate !== undefined) {
             db.transaction(tx => {
                 if (!isSmall) {
                     tx.executeSql(`
                         SELECT * 
                         FROM GoalFinished
                         WHERE id_goal = ? AND date_finished = ?;
-                    `, [id, currentDate], (_, { rows }) => {
+                    `, [id, endingDate || currentDate], (_, { rows }) => {
                         setIsDone(rows._array.length > 0);
                     }, (t, error) => {
                         console.log(error);
@@ -28,13 +33,12 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                         SELECT * 
                         FROM SmallerGoalFinished
                         WHERE id_smaller_goal = ? AND date_finished = ?;
-                    `, [id, currentDate], (_, { rows }) => {
+                    `, [id, endingDate || currentDate], (_, { rows }) => {
                         setIsDone(rows._array.length > 0);
                     }, (t, error) => {
                         console.log(error);
                     });
                 }
-                
             });
         }
     }, []);
@@ -47,14 +51,14 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                     tx.executeSql(`
                         INSERT INTO GoalFinished(id_goal, date_finished)
                         VALUES (?, ?);
-                    `, [id, currentDate], () => {}, (t, error) => {
+                    `, [id, endingDate || currentDate], () => {}, (t, error) => {
                         console.log(error);
                     });
                 } else {
                     tx.executeSql(`
                         INSERT INTO SmallerGoalFinished(id_smaller_goal, date_finished)
                         VALUES (?, ?);
-                    `, [id, currentDate], () => {}, (t, error) => {
+                    `, [id, endingDate || currentDate], () => {}, (t, error) => {
                         console.log(error);
                     });
                 }
@@ -64,25 +68,23 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                     tx.executeSql(`
                         DELETE FROM GoalFinished
                         WHERE id_goal = ? AND date_finished = ?;
-                    `, [id, currentDate], (_, { rows }) => {}, (t, error) => {
+                    `, [id, endingDate || currentDate], () => {}, (t, error) => {
                         console.log(error);
                     });
                 } else {
                     tx.executeSql(`
                         DELETE FROM SmallerGoalFinished
                         WHERE id_smaller_goal = ? AND date_finished = ?;
-                    `, [id, currentDate], (_, { rows }) => {}, (t, error) => {
+                    `, [id, endingDate || currentDate], () => {}, (t, error) => {
                         console.log(error);
                     });
                 }
-                
             }
         });
         // small goal reports to parent
         if (parentIsDoneCallback !== undefined) {
             parentIsDoneCallback();
-        }
-            
+        }   
     }, [isDone]);
 
     const checkIfDoneByChildren = () => {
@@ -117,6 +119,7 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                 onPress={() => {
                     setIsDone(!isDone);
                 }}
+                disabled={isParent}
             >
                 <Text style={{ color: "black"}}>{ title }</Text>
                 <Checkbox
@@ -128,14 +131,17 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
             </TouchableOpacity>
             {smallerGoals && smallerGoals.map(smallerGoal => {
                 
-                return (<Goal
-                    key={smallerGoal.id_smaller_goal}
-                    id={smallerGoal.id_smaller_goal}
-                    title={smallerGoal.name}
-                    color={color}
-                    isSmall={true}
-                    parentIsDoneCallback={ checkIfDoneByChildren }
-                />)
+                return (
+                    <Goal
+                        key={smallerGoal.id_smaller_goal}
+                        id={smallerGoal.id_smaller_goal}
+                        title={smallerGoal.name}
+                        color={color}
+                        isSmall={true}
+                        endingDate={endingDate}
+                        parentIsDoneCallback={ checkIfDoneByChildren }
+                    />
+                );
             })}
         </>
     );

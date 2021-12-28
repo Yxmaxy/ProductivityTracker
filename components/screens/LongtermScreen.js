@@ -3,8 +3,8 @@ import { ScrollView, View } from "react-native";
 import Goal from "../Goal";
 import FloatingButton from "../FloatingButton";
 import { Context } from "../common/Store";
-import { flexStyles } from "../common/styles";
-import { db } from "../common/globals";
+import { flexStyles, floatingButtonStyles } from "../common/styles";
+import { currentDate, db } from "../common/globals";
 
 const LongtermScreen = ({ navigation }) => {
     const [goals, setGoals] = useState([]);
@@ -55,10 +55,12 @@ const LongtermScreen = ({ navigation }) => {
                                 title={goal.name}
                                 color={goal.color}
                                 smallerGoals={smallerGoals[goal.id_goal]}
+                                endingDate={currentDate}
                             />
                         </View>
                     );
                 })}
+                <View style={floatingButtonStyles.containerWithMargin} />
             </ScrollView>
             <FloatingButton text="+" navigation={navigation} navigateTo="AddGoal" isLongterm={ true } />
         </>

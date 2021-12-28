@@ -4,7 +4,8 @@ import Goal from "../Goal";
 import FloatingButton from "../FloatingButton";
 import { Context } from "../common/Store";
 import GoalGroup from "../GoalGroup";
-import { db } from "../common/globals";
+import { db, currentDate } from "../common/globals";
+import { floatingButtonStyles } from "../common/styles";
 
 const TodayScreen = ({ navigation }) => {
     const [goalsWeek, setGoalsWeek] = useState([]);
@@ -22,8 +23,8 @@ const TodayScreen = ({ navigation }) => {
             tx.executeSql(`
                     SELECT g.*, color
                     FROM GoalWeek JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
-                    WHERE strftime('%w', 'now') = day
-                    AND DATE('now') >= date_started
+                    WHERE strftime('%w', '${currentDate}') = day
+                    AND DATE('${currentDate}') >= date_started
                     ORDER BY id_group;
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
@@ -33,10 +34,10 @@ const TodayScreen = ({ navigation }) => {
             });
             // Monthly goals
             tx.executeSql(`
-                    SELECT g.*, color, day, (strftime('%Y-%m-','now') || day) AS endingDate
+                    SELECT g.*, color, day, (strftime('%Y-%m-','${currentDate}') || day) AS endingDate
                     FROM GoalMonth JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
-                    WHERE CAST(strftime('%d','now') AS Integer) BETWEEN day - num_available_before AND day
-                    AND DATE('now') >= date_started
+                    WHERE CAST(strftime('%d', '${currentDate}') AS Integer) BETWEEN day - num_available_before AND day
+                    AND DATE('${currentDate}') >= date_started
                     ORDER BY id_group;
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
@@ -46,11 +47,11 @@ const TodayScreen = ({ navigation }) => {
             });
             // Yearly goals
             tx.executeSql(`
-                    SELECT g.*, color, date, (strftime('%Y-','now') || strftime('%m-%d', date)) AS endingDate,
+                    SELECT g.*, color, date, (strftime('%Y-','${currentDate}') || strftime('%m-%d', date)) AS endingDate,
                     substr(DATE(date, '-' || num_available_before || ' days'), 6) AS dateDiff
                     FROM GoalYear JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
-                    WHERE substr(DATE('now'), 6) BETWEEN dateDiff AND substr(date, 6)
-                    AND DATE('now') >= date_started
+                    WHERE substr(DATE('${currentDate}'), 6) BETWEEN dateDiff AND substr(date, 6)
+                    AND DATE('${currentDate}') >= date_started
                     ORDER BY id_group;
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
@@ -61,10 +62,10 @@ const TodayScreen = ({ navigation }) => {
             // Custom goals
             tx.executeSql(`
                     SELECT g.*, color, first_date, num_days_between, num_available_before,
-                    ((round(julianday(strftime('%Y-%m-%d', 'now')) - julianday(first_date))) % num_days_between) AS dateDiff
+                    ((round(julianday(strftime('%Y-%m-%d', '${currentDate}')) - julianday(first_date))) % num_days_between) AS dateDiff
                     FROM GoalCustom JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
                     WHERE dateDiff = 0 OR dateDiff >= num_days_between - num_available_before
-                    AND DATE('now') >= date_started
+                    AND DATE('${currentDate}') >= date_started
                     ORDER BY id_group;
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
@@ -115,6 +116,7 @@ const TodayScreen = ({ navigation }) => {
                                 title={goal.name}
                                 color={goal.color}
                                 smallerGoals={smallerGoals[goal.id_goal]}
+                                endingDate={currentDate}
                             />
                         );
                     })}
@@ -161,6 +163,7 @@ const TodayScreen = ({ navigation }) => {
                         );
                     })}
                 </GoalGroup>
+                <View style={floatingButtonStyles.containerWithMargin} />
             </ScrollView>
             <FloatingButton text="+" navigation={navigation} navigateTo="AddGoal" />
         </>
