@@ -102,7 +102,7 @@ const App = () => {
         db.transaction((tx) => {
             tx.executeSql(
                 `INSERT INTO GoalGroups(id_group, name, color)
-                VALUES (1, "Default", "#000000");`
+                VALUES (1, "Default", "#F06449");`
             );
         });
     }, [])

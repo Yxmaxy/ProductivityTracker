@@ -5,7 +5,7 @@ import { colors, goalStyles } from "./common/styles";
 import { db } from "./common/globals";
 import { currentDate } from "./common/globals";
 
-const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback }) => {
+const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, endingDate }) => {
     const [isDone, setIsDone] = useState(false);
     const [isParent, setIsParent] = useState(false);
 
@@ -102,10 +102,6 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback })
             });
         });
     }
-
-    useEffect(() => {
-        console.log(isParent, title);
-    }, [isParent]);
 
     return (
         <>

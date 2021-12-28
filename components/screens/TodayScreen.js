@@ -15,6 +15,7 @@ const TodayScreen = ({ navigation }) => {
 
     const [storeState, ] = useContext(Context);
 
+    //* effect to get all goals
     useEffect(() => {
         db.transaction((tx) => {
             // Weekly goals
@@ -22,7 +23,8 @@ const TodayScreen = ({ navigation }) => {
                     SELECT g.*, color
                     FROM GoalWeek JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
                     WHERE strftime('%w', 'now') = day
-                    AND DATE('now') >= date_started;
+                    AND DATE('now') >= date_started
+                    ORDER BY id_group;
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
                 setGoalsWeek(rows._array);
@@ -31,10 +33,11 @@ const TodayScreen = ({ navigation }) => {
             });
             // Monthly goals
             tx.executeSql(`
-                    SELECT g.*, color
+                    SELECT g.*, color, day, (strftime('%Y-%m-','now') || day) AS endingDate
                     FROM GoalMonth JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
                     WHERE CAST(strftime('%d','now') AS Integer) BETWEEN day - num_available_before AND day
-                    AND DATE('now') >= date_started;
+                    AND DATE('now') >= date_started
+                    ORDER BY id_group;
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
                 setGoalsMonth(rows._array);
@@ -43,11 +46,12 @@ const TodayScreen = ({ navigation }) => {
             });
             // Yearly goals
             tx.executeSql(`
-                    SELECT g.*, color,
+                    SELECT g.*, color, date, (strftime('%Y-','now') || strftime('%m-%d', date)) AS endingDate,
                     substr(DATE(date, '-' || num_available_before || ' days'), 6) AS dateDiff
                     FROM GoalYear JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
                     WHERE substr(DATE('now'), 6) BETWEEN dateDiff AND substr(date, 6)
-                    AND DATE('now') >= date_started;
+                    AND DATE('now') >= date_started
+                    ORDER BY id_group;
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
                 setGoalsYear(rows._array);
@@ -56,11 +60,12 @@ const TodayScreen = ({ navigation }) => {
             });
             // Custom goals
             tx.executeSql(`
-                    SELECT g.*, color,
-                    ((round(julianday('now') - julianday(first_date) - 1)) % num_days_between) AS dateDiff
+                    SELECT g.*, color, first_date, num_days_between, num_available_before,
+                    ((round(julianday(strftime('%Y-%m-%d', 'now')) - julianday(first_date))) % num_days_between) AS dateDiff
                     FROM GoalCustom JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
-                    WHERE dateDiff IS null OR dateDiff = 0 OR dateDiff >= num_days_between - num_available_before
-                    AND DATE('now') >= date_started;
+                    WHERE dateDiff = 0 OR dateDiff >= num_days_between - num_available_before
+                    AND DATE('now') >= date_started
+                    ORDER BY id_group;
                 `, [], (_, { rows }) => {
                 //console.log(rows._array);
                 setGoalsCustom(rows._array);
@@ -70,11 +75,19 @@ const TodayScreen = ({ navigation }) => {
         });
     }, [storeState.forceUpdate]);
 
-    //* effects for smaller goals
-    // Weekly
+    //* effect for smaller goals
     useEffect(() => {
         var goalIDs = [];
         goalsWeek.forEach(goal => {
+            goalIDs.push(goal.id_goal);
+        });
+        goalsMonth.forEach(goal => {
+            goalIDs.push(goal.id_goal);
+        });
+        goalsYear.forEach(goal => {
+            goalIDs.push(goal.id_goal);
+        });
+        goalsCustom.forEach(goal => {
             goalIDs.push(goal.id_goal);
         });
         db.transaction((tx) => {
@@ -88,7 +101,7 @@ const TodayScreen = ({ navigation }) => {
                 console.log(error);
             });
         });
-    }, [goalsWeek]);
+    }, [goalsWeek, goalsMonth, goalsYear, goalsCustom]);
 
     return (
         <>
@@ -96,45 +109,56 @@ const TodayScreen = ({ navigation }) => {
                 <GoalGroup title="Weekly goals">
                     {goalsWeek.map(goal => {
                         return (
-                            <View key={goal.id_goal}>
-                                <Goal
-                                    id={goal.id_goal}
-                                    title={goal.name}
-                                    color={goal.color}
-                                    smallerGoals={smallerGoals[goal.id_goal]}
-                                />
-                            </View>
+                            <Goal
+                                key={goal.id_goal}
+                                id={goal.id_goal}
+                                title={goal.name}
+                                color={goal.color}
+                                smallerGoals={smallerGoals[goal.id_goal]}
+                            />
                         );
                     })}
                 </GoalGroup>
                 <GoalGroup title="Monthly goals">
                     {goalsMonth.map(goal => {
-                        return (<Goal 
-                            key={goal.id_goal}
-                            id={goal.id_goal}
-                            title={goal.name}
-                            color={goal.color}
-                        />);
+                        return (
+                            <Goal
+                                key={goal.id_goal}
+                                id={goal.id_goal}
+                                title={goal.name}
+                                color={goal.color}
+                                smallerGoals={smallerGoals[goal.id_goal]}
+                                endingDate={goal.endingDate}
+                            />
+                        );
                     })}
                 </GoalGroup>
                 <GoalGroup title="Yearly goals">
                     {goalsYear.map(goal => {
-                        return (<Goal 
-                            key={goal.id_goal}
-                            id={goal.id_goal}
-                            title={goal.name}
-                            color={goal.color}
-                        />);
+                        return (
+                            <Goal
+                                key={goal.id_goal}
+                                id={goal.id_goal}
+                                title={goal.name}
+                                color={goal.color}
+                                smallerGoals={smallerGoals[goal.id_goal]}
+                                endingDate={goal.endingDate}
+                            />
+                        );
                     })}
                 </GoalGroup>
                 <GoalGroup title="Custom goals">
                     {goalsCustom.map(goal => {
-                        return (<Goal 
-                            key={goal.id_goal}
-                            id={goal.id_goal}
-                            title={goal.name}
-                            color={goal.color}
-                        />);
+                        return (
+                            <Goal
+                                key={goal.id_goal}
+                                id={goal.id_goal}
+                                title={goal.name}
+                                color={goal.color}
+                                smallerGoals={smallerGoals[goal.id_goal]}
+                                endingDate={goal.endingDate}
+                            />
+                        );
                     })}
                 </GoalGroup>
             </ScrollView>

@@ -232,7 +232,7 @@ const AddGoal = ({ route, navigation }) => {
                             });
                         });
                     } else {
-                        const selectedDate = calendarSelectedDay.getFullYear() + "-" + (calendarSelectedDay.getMonth() + 1) + "-" + calendarSelectedDay.getDate();
+                        const selectedDate = calendarSelectedDay.getFullYear() + "-" + ("0" + (calendarSelectedDay.getMonth() + 1)).slice(-2) + "-" + ("0" + calendarSelectedDay.getDate()).slice(-2);
                         db.transaction((tx) => {
                             // insert goals
                             tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, date_started) VALUES (?, ?, ?, ?);", [name, selectedGroup, false, currentDate], (_, resultSet) => {
@@ -246,6 +246,7 @@ const AddGoal = ({ route, navigation }) => {
                                 // insert depending on frequency
                                 switch (selectedFrequency) {
                                     case "year":
+                                        console.log(selectedDate)
                                         tx.executeSql("INSERT INTO GoalYear(id_goal, date, num_available_before) VALUES (?, ?, ?);", [goalId, selectedDate, daysBeforeDeadline], () => {}, (t, error) => {
                                             console.log(error);
                                         });
