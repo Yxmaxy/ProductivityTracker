@@ -9,7 +9,7 @@ const FloatingButton = ({ text, navigation, navigateTo, isLongterm }) => {
                 navigation.navigate(navigateTo, { isLongterm });
             }}
         >
-            <Text>{ text }</Text>
+            <Text style={floatingButtonStyles.text}>{ text }</Text>
         </TouchableOpacity>
     );
 }

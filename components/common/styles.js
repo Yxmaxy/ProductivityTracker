@@ -68,6 +68,10 @@ export const floatingButtonStyles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    text: {
+        fontSize: 20,
+        color: colors.colorBaseDark,
+    },
     containerWithMargin: {
         marginBottom: 80,
     }

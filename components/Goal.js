@@ -5,18 +5,14 @@ import { colors, goalStyles } from "./common/styles";
 import { db } from "./common/globals";
 import { currentDate } from "./common/globals";
 
-const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, endingDate }) => {
+const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, endingDate, isReminder }) => {
     const [isDone, setIsDone] = useState(false);
     const [isParent, setIsParent] = useState(false);
-/*
-    useEffect(() => {
-        console.log(title + "\t\t\t" + endingDate);
-    }, [endingDate]);
-*/
+    const [isHidden, setIsHidden] = useState(false);
 
     // set initial value
     useEffect(() => {
-        if (id !== undefined && endingDate !== undefined) {
+        if (isReminder === undefined && id !== undefined && endingDate !== undefined) {
             db.transaction(tx => {
                 if (!isSmall) {
                     tx.executeSql(`
@@ -47,6 +43,17 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
     useEffect(() => {
         db.transaction(tx => {
             if (isDone) {
+                if (isReminder) {
+                    tx.executeSql(`
+                        DELETE FROM Reminders
+                        WHERE id_reminder = ?;
+                    `, [id, ], () => {
+                        setIsHidden(true);
+                    }, (t, error) => {
+                        console.log(error);
+                    });
+                    return;
+                }
                 if (!isSmall) {
                     tx.executeSql(`
                         INSERT INTO GoalFinished(id_goal, date_finished)
@@ -107,7 +114,7 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
 
     return (
         <>
-            <TouchableOpacity
+            {!isHidden && <TouchableOpacity
                 style={[goalStyles.goal, {
                     borderLeftColor: color,
                     borderLeftWidth: (color === undefined) ? 0 : (isSmall) ? 6 : 12,
@@ -128,9 +135,8 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                     onValueChange={setIsDone}
                     disabled={isParent}
                 />
-            </TouchableOpacity>
+            </TouchableOpacity>}
             {smallerGoals && smallerGoals.map(smallerGoal => {
-                
                 return (
                     <Goal
                         key={smallerGoal.id_smaller_goal}

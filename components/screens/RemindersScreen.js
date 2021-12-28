@@ -28,6 +28,7 @@ const RemindersScreen = ({ navigation }) => {
                         key={goal.id_reminder}
                         id={goal.id_reminder}
                         title={goal.name}
+                        isReminder={true}
                     />);
                 })}
                 <View style={floatingButtonStyles.containerWithMargin} />
