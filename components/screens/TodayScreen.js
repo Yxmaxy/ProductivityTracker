@@ -62,7 +62,8 @@ const TodayScreen = ({ navigation }) => {
             // Custom goals
             tx.executeSql(`
                     SELECT g.*, color, first_date, num_days_between, num_available_before,
-                    ((round(julianday(strftime('%Y-%m-%d', '${currentDate}')) - julianday(first_date))) % num_days_between) AS dateDiff
+                    strftime("%Y-%m-%d", julianday('${currentDate}', '+' || ((round(julianday('${currentDate}') - julianday(first_date))) % num_days_between) || ' days')) AS endingDate,
+                    ((round(julianday('${currentDate}') - julianday(first_date))) % num_days_between) AS dateDiff
                     FROM GoalCustom JOIN Goals AS g USING(id_goal) JOIN GoalGroups USING(id_group)
                     WHERE dateDiff = 0 OR dateDiff >= num_days_between - num_available_before
                     AND DATE('${currentDate}') >= date_started

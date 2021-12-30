@@ -20,22 +20,22 @@ const MonthScreen = () => {
             db.transaction(tx => {
                 tx.executeSql(`
                     SELECT COUNT(*) AS finishedGoalsNum FROM (
-                        SELECT "0" AS type, COUNT(*) AS count
+                        SELECT id_goal
                         FROM GoalWeek JOIN Goals AS g USING(id_goal) JOIN GoalFinished USING(id_goal)
                         WHERE strftime('%w', '${lookedAtDate}') = day
                         AND DATE('${lookedAtDate}') >= date_started
                         UNION
-                        SELECT "1" AS type, COUNT(*) AS count
+                        SELECT id_goal
                         FROM GoalMonth JOIN Goals AS g USING(id_goal) JOIN GoalFinished USING(id_goal)
                         WHERE CAST(strftime('%d', '${currentDate}') AS Integer) BETWEEN day - num_available_before AND day
                         AND DATE('${currentDate}') >= date_started
                         UNION
-                        SELECT "2" AS type, COUNT(*) AS count
+                        SELECT id_goal
                         FROM GoalYear JOIN Goals AS g USING(id_goal) JOIN GoalFinished USING(id_goal)
                         WHERE substr(DATE('${currentDate}'), 6) BETWEEN substr(DATE(date, '-' || num_available_before || ' days'), 6) AND substr(date, 6)
                         AND DATE('${currentDate}') >= date_started
                         UNION
-                        SELECT "3" AS type, COUNT(*) AS count
+                        SELECT id_goal
                         FROM GoalCustom JOIN Goals AS g USING(id_goal) JOIN GoalFinished USING(id_goal)
                         WHERE ((round(julianday(strftime('%Y-%m-%d', '${currentDate}')) - julianday(first_date))) % num_days_between) = 0 OR ((round(julianday(strftime('%Y-%m-%d', '${currentDate}')) - julianday(first_date))) % num_days_between) >= num_days_between - num_available_before
                         AND DATE('${currentDate}') >= date_started
@@ -69,7 +69,6 @@ const MonthScreen = () => {
                     );
                 `, [], (_, { rows }) => {
                     percentage /= rows._array[0].allGoalsNum;
-                    console.log(percentage);
                     setMarkedDates(prevState => ({
                         ...prevState,
                         [lookedAtDate]: { color: `hsl(${parseInt(percentage * 100)}, 85%, 50%)`, textColor: "black" }

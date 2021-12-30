@@ -144,7 +144,7 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                         title={smallerGoal.name}
                         color={color}
                         isSmall={true}
-                        endingDate={endingDate}
+                        endingDate={endingDate || currentDate}
                         parentIsDoneCallback={ checkIfDoneByChildren }
                     />
                 );
