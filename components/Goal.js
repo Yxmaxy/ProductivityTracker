@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { TouchableOpacity, Text } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { TouchableOpacity, Text, View } from "react-native";
 import Checkbox from "expo-checkbox";
-import { colors, goalStyles } from "./common/styles";
+import { colors, flexStyles, goalStyles } from "./common/styles";
 import { db } from "./common/globals";
 import { currentDate } from "./common/globals";
+import { Context } from "./common/Store";
 
-const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, endingDate, isReminder }) => {
+const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, endingDate, isReminder, navigation, settingsMode }) => {
     const [isDone, setIsDone] = useState(false);
-    const [isParent, setIsParent] = useState(false);
+    const [isDisabled, setIsDisabled] = useState(false);
     const [isHidden, setIsHidden] = useState(false);
+
+    const [, storeDispatch] = useContext(Context);
 
     // set initial value
     useEffect(() => {
@@ -41,6 +44,8 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
 
     // on checkbox change
     useEffect(() => {
+        if (settingsMode)
+            return;
         db.transaction(tx => {
             if (isDone) {
                 if (isReminder) {
@@ -95,8 +100,8 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
     }, [isDone]);
 
     const checkIfDoneByChildren = () => {
-        // set value for isParent
-        setIsParent(smallerGoals !== undefined);
+        // set value for isDisabled
+        setIsDisabled(smallerGoals !== undefined);
 
         // check if all children are done
         db.transaction(tx => {
@@ -127,15 +132,55 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                 onPress={() => {
                     setIsDone(!isDone);
                 }}
-                disabled={isParent}
+                disabled={isDisabled}
             >
                 <Text style={{ color: "black"}}>{ title }</Text>
-                <Checkbox
-                    color={ colors.colorPopDarkBlue }
-                    value={isDone}
-                    onValueChange={setIsDone}
-                    disabled={isParent}
-                />
+                {!settingsMode &&
+                    <Checkbox
+                        color={ colors.colorPopDarkBlue }
+                        value={isDone}
+                        onValueChange={setIsDone}
+                        disabled={isDisabled}
+                    /> || 
+                    <View style={flexStyles.alignedRow}>
+                        <TouchableOpacity>
+                            <Text onPress={() => {
+                                console.log("Edit");
+                                db.transaction(tx => {
+                                    tx.executeSql(`
+                                        SELECT :)
+                                    `, [id], () => {
+                                        
+                                        //navigation.navigate("AddGoal", { goalData });
+                                    }, (t, error) => {
+                                        console.log(error);
+                                    });
+                                });
+                            }}>✏</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={{marginLeft: 10}}>
+                            <Text onPress={() => {
+                                db.transaction(tx => {
+                                    tx.executeSql(`
+                                        DELETE FROM SmallerGoals
+                                        WHERE id_goal = ?;
+                                    `, [id], () => {}, (t, error) => {
+                                        console.log(error);
+                                    });
+                                    tx.executeSql(`
+                                        DELETE FROM Goals
+                                        WHERE id_goal = ?;
+                                    `, [id], () => {
+                                        storeDispatch({ type: "TOGGLE_FORCE_UPDATE" });
+                                    }, (t, error) => {
+                                        console.log(error);
+                                    });
+                                });
+                            }}>❌</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
+
             </TouchableOpacity>}
             {smallerGoals && smallerGoals.map(smallerGoal => {
                 return (

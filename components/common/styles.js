@@ -27,6 +27,8 @@ export const formStyles = StyleSheet.create({
         backgroundColor: "white",
         borderColor: "black",
         borderWidth: 1,
+        paddingLeft: 3,
+        paddingRight: 3,
     },
     submitButton: {
         backgroundColor: "dodgerblue",
@@ -41,11 +43,13 @@ export const formStyles = StyleSheet.create({
 //* Screens
 // TabNav
 export const tabNavScreenStyles = StyleSheet.create({
-    dateText: {
+    dateContainer: {
         backgroundColor: "white",
         textAlign: "right",
-        fontWeight: "bold",
         padding: 17,
+    },
+    dateText: {
+        fontWeight: "bold",
         fontSize: 18,
     },
     container: {

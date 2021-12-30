@@ -4,6 +4,7 @@ import TabNavScreen from './TabNavScreen';
 import AddReminder from '../screens/modals/AddReminder';
 import AddGoal from '../screens/modals/AddGoal';
 import AddGroup from '../screens/modals/AddGroup';
+import SettingsScreen from '../screens/SettingsScreen';
 
 const RootStack = createStackNavigator();
 const RootStackScreen = () => {
@@ -41,6 +42,15 @@ const RootStackScreen = () => {
                     animationEnabled: true,
                     headerShown: true,
                     headerTitle: "Add a group",
+                }}
+            />
+            <RootStack.Screen
+                name="SettingsScreen"
+                component={ SettingsScreen }
+                options={{ 
+                    animationEnabled: true,
+                    headerShown: true,
+                    headerTitle: "Edit or delete goals",
                 }}
             />
         </RootStack.Navigator>

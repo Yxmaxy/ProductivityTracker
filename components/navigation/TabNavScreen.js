@@ -5,10 +5,10 @@ import TodayScreen from '../screens/TodayScreen';
 import LongtermScreen from '../screens/LongtermScreen';
 import RemindersScreen from '../screens/RemindersScreen';
 import MonthScreen from '../screens/MonthScreen';
-import { tabNavScreenStyles, colors } from '../common/styles';
+import { tabNavScreenStyles, colors, flexStyles } from '../common/styles';
 
 const Tab = createMaterialTopTabNavigator();
-const TabNavScreen = () => {
+const TabNavScreen = ({navigation}) => {
     const [date, setDate] = useState(null);
 
     useEffect(() => {
@@ -19,7 +19,12 @@ const TabNavScreen = () => {
 
     return (
         <View style={ tabNavScreenStyles.container }>
-            <Text style={ tabNavScreenStyles.dateText }>{date}</Text>
+            <View style={[tabNavScreenStyles.dateContainer, flexStyles.alignedRow]}>
+                <Text style={tabNavScreenStyles.dateText} onPress={() => {
+                    navigation.navigate("SettingsScreen");
+                }}>🛠</Text>
+                <Text style={tabNavScreenStyles.dateText}>{date}</Text>
+            </View>
             <Tab.Navigator 
                 initialRouteName={"Today"}
                 screenOptions={{

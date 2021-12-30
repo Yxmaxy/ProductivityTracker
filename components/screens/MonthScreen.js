@@ -41,7 +41,6 @@ const MonthScreen = () => {
                     AND ((round(julianday(strftime('%Y-%m-%d', '${lookedAtDate}')) - julianday(first_date))) % num_days_between) = 0 OR ((round(julianday(strftime('%Y-%m-%d', '${currentDate}')) - julianday(first_date))) % num_days_between) >= num_days_between - num_available_before
                     AND DATE('${lookedAtDate}') >= date_started;
                 `, [], (_, { rows }) => {
-                    console.log(rows._array.length);
                     percentage = rows._array.length;
                 }, (t, error) => {
                     console.log(error);
@@ -67,12 +66,10 @@ const MonthScreen = () => {
                     WHERE ((round(julianday(strftime('%Y-%m-%d', '${lookedAtDate}')) - julianday(first_date))) % num_days_between) = 0 OR ((round(julianday(strftime('%Y-%m-%d', '${currentDate}')) - julianday(first_date))) % num_days_between) >= num_days_between - num_available_before
                     AND DATE('${lookedAtDate}') >= date_started;
                 `, [], (_, { rows }) => {
-                    //console.log(rows._array);
                     if (rows._array.length == 0)
                         percentage = 0;
                     else
                         percentage /= rows._array.length;
-                    console.log(percentage + "\n" + rows._array.length +"\n");
                     setMarkedDates(prevState => ({
                         ...prevState,
                         [lookedAtDate]: { color: `hsl(${parseInt(percentage * 100)}, 85%, 50%)`, textColor: "black" }
