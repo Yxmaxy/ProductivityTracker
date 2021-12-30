@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Calendar } from 'react-native-calendars';
-import { currentDate, db } from '../common/globals';
+import { currentDate, currentDayInMonth, db } from '../common/globals';
 import { colors } from '../common/styles';
 
 const MonthScreen = () => {
@@ -11,10 +11,8 @@ const MonthScreen = () => {
             ...markedDates,
             [currentDate]: { color: colors.colorPopBlue, textColor: "white" },
         });
-
-        const todayDate = new Date().getDate();
         
-        for (let day = 1; day < todayDate; day++) {
+        for (let day = 1; day < currentDayInMonth; day++) {
             const lookedAtDate = new Date().getFullYear() + "-" + (new Date().getMonth() + 1) + "-" + day;
             let percentage = 0;
             db.transaction(tx => {

@@ -101,11 +101,12 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
         // check if all children are done
         db.transaction(tx => {
             tx.executeSql(`
-                SELECT COUNT(*) AS numDone 
+                SELECT *
                 FROM SmallerGoals JOIN SmallerGoalFinished USING(id_smaller_goal)
-                WHERE id_goal = ?;
+                WHERE id_goal = ?
+                AND date_finished = '${endingDate}';
             `, [id,], (_, { rows }) => {
-                setIsDone(rows._array[0].numDone === smallerGoals.length);
+                setIsDone(rows._array.length === smallerGoals.length);
             }, (t, error) => {
                 console.log(error);
             });
@@ -144,7 +145,7 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                         title={smallerGoal.name}
                         color={color}
                         isSmall={true}
-                        endingDate={endingDate || currentDate}
+                        endingDate={endingDate}
                         parentIsDoneCallback={ checkIfDoneByChildren }
                     />
                 );
