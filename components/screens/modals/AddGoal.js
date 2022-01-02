@@ -129,6 +129,7 @@ const AddGoal = ({ route, navigation }) => {
                                 style= {formStyles.textInput}
                                 value={name}
                                 onChangeText={ setName }
+                                placeholder="Enter name of goal"
                             />
                         </View>
                         <View style={formStyles.formRow}>

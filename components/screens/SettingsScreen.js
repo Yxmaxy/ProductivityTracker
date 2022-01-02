@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Text, TextInput, View, ScrollView } from "react-native";
 import { db } from "../common/globals";
 import { Context } from "../common/Store";
-import { flexStyles, formStyles } from "../common/styles";
+import { colors, flexStyles, formStyles } from "../common/styles";
 import Goal from "../Goal";
 
 const SettingsScreen = ({navigation}) => {
@@ -27,10 +27,10 @@ const SettingsScreen = ({navigation}) => {
 
     return (
         <>
-            <View style={flexStyles.alignedRow}>
+            <View style={[flexStyles.alignedRow, { padding: 10, alignItems: "center", backgroundColor: colors.colorBaseDark }]}>
                 <Text>Search goal:</Text>
                 <TextInput 
-                    style = {[formStyles.textInput, {flex: 1}]}
+                    style = {[formStyles.textInput, { flex: 1, marginLeft: 10 }]}
                     value = {goalFilter}
                     onChangeText = {setGoalFilter}
                     placeholder = "Enter goal name"
