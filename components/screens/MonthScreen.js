@@ -67,7 +67,7 @@ const MonthScreen = () => {
                     percentage /= rows._array.length;
                 setMarkedDates(prevState => ({
                     ...prevState,
-                    [lookedAtDate]: { color: `hsl(${parseInt(percentage * 100)}, 85%, 50%)`, textColor: "black" }
+                    [lookedAtDate]: { color: `hsl(${parseInt(percentage * 100)}, 85%, 60%)`, textColor: "black" }
                 }));
             }, (t, error) => {
                 console.log(error);

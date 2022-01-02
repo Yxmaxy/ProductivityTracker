@@ -20,18 +20,45 @@ export const flexStyles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between"
     },
+    containerMargin: {
+        margin: 10,
+        marginBottom: 30,
+    }
 });
 
 export const formStyles = StyleSheet.create({
+    formRow: {
+        marginBottom: 17,
+    },
+    formSmallerRow: {
+        marginBottom: 7,
+    },
+    formSmallerGoal: {
+        backgroundColor: colors.colorBaseLight,
+        alignItems: "center",
+        paddingLeft: 10,
+        borderRadius: 4,
+    },
     textInput: {
         backgroundColor: "white",
         borderColor: "black",
         borderWidth: 1,
         paddingLeft: 3,
         paddingRight: 3,
+        borderRadius: 4,
+    },
+    button: {
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 10,
+        backgroundColor: colors.colorPopBlue,
+    },
+    buttomMarginRound: {
+        marginLeft: 3,
+        borderRadius: 4,
     },
     submitButton: {
-        backgroundColor: "dodgerblue",
+        backgroundColor: colors.colorPopBlue,
         alignItems: "center",
         position: "absolute",
         width: "100%",

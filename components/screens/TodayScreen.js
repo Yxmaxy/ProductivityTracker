@@ -121,7 +121,7 @@ const TodayScreen = ({ navigation }) => {
             <ScrollView>
                 {Object.entries(goalsByGroup).map((group) => {
                     return (
-                        <GoalGroup title={group[0]}>
+                        <GoalGroup key={group[0]} title={group[0]}>
                             {group[1].map(goal => {
                                 return (
                                     <Goal
