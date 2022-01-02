@@ -145,13 +145,13 @@ const Goal = ({ id, title, color, isSmall, smallerGoals, parentIsDoneCallback, e
                     <View style={flexStyles.alignedRow}>
                         <TouchableOpacity>
                             <Text onPress={() => {
-                                console.log("Edit");
                                 db.transaction(tx => {
                                     tx.executeSql(`
-                                        SELECT :)
-                                    `, [id], () => {
-                                        
-                                        //navigation.navigate("AddGoal", { goalData });
+                                        SELECT *
+                                        FROM Goals
+                                        WHERE id_goal = ?;
+                                    `, [id], (_, { rows }) => {
+                                        navigation.navigate("AddGoal", { goalData: rows._array[0] });
                                     }, (t, error) => {
                                         console.log(error);
                                     });

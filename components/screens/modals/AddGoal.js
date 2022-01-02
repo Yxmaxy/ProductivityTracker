@@ -8,14 +8,14 @@ import { flexStyles, formStyles } from '../../common/styles';
 import { currentDate, db } from '../../common/globals';
 
 const AddGoal = ({ route, navigation }) => {
-    const [name, setName] = useState("");
+    const [name, setName] = useState((route.params.goalData) ? route.params.goalData.name : "");
     const [smallerGoalName, setSmallerGoalName] = useState("");
     const [smallerGoals, setSmallerGoals] = useState([]);
-    const [selectedGroup, setSelectedGroup] = useState(1);
+    const [selectedGroup, setSelectedGroup] = useState((route.params.goalData) ? route.params.goalData.id_group : 1);
     const [selectedFrequency, setSelectedFrequency] = useState("week");
     const [daysBeforeDeadline, setDaysBeforeDeadline] = useState(0);
     const [goalGroups, setGoalGroups] = useState([]);
-    const [isLongterm, setIsLongterm] = useState(route.params.isLongterm);
+    const [isLongterm, setIsLongterm] = useState((route.params.goalData) ? (route.params.goalData.is_longterm === 1) : route.params.isLongterm);
     const [weekSelectedDays, setWeekSelectedDays] = useState([]);
     const [monthSelectedDay, setMonthSelectedDay] = useState(1);
     const [calendarSelectedDay, setCalendarSelectedDay] = useState(new Date());
@@ -23,6 +23,90 @@ const AddGoal = ({ route, navigation }) => {
     const [customDaysBetween, setCustomDaysBetween] = useState(0);
 
     const [storeState, storeDispatch] = useContext(Context);
+
+    // effect fills data when editing
+    useEffect(() => {
+        if (route.params.goalData) {
+            db.transaction(tx => {
+                //* check goal type
+                // weekly
+                tx.executeSql(`
+                    SELECT *
+                    FROM Goals JOIN GoalWeek USING(id_goal)
+                    WHERE id_goal = ?;
+                `, [route.params.goalData.id_goal], (_, { rows }) => {
+                    if (rows._array.length > 0) {
+                        setSelectedFrequency("week");
+                        const weekSelectedDaysTemp = [... weekSelectedDays];
+                        rows._array.forEach(goal => {
+                            weekSelectedDaysTemp[(goal.day == 0) ? 6 : goal.day - 1] = true;
+                            setWeekSelectedDays(weekSelectedDaysTemp);
+                        });
+                    }
+                }, (t, error) => {
+                    console.log(error);
+                });
+                // monthly
+                tx.executeSql(`
+                    SELECT *
+                    FROM Goals JOIN GoalMonth USING(id_goal)
+                    WHERE id_goal = ?;
+                `, [route.params.goalData.id_goal], (_, { rows }) => {
+                    if (rows._array.length > 0) {
+                        setSelectedFrequency("month");
+                        setMonthSelectedDay(rows._array[0].day);
+                        setDaysBeforeDeadline(rows._array[0].num_available_before);
+                    }
+                }, (t, error) => {
+                    console.log(error);
+                });
+                // yearly
+                tx.executeSql(`
+                    SELECT *
+                    FROM Goals JOIN GoalYear USING(id_goal)
+                    WHERE id_goal = ?;
+                `, [route.params.goalData.id_goal], (_, { rows }) => {
+                    if (rows._array.length > 0) {
+                        setSelectedFrequency("year");
+                        setCalendarSelectedDay(new Date(rows._array[0].date));
+                        setDaysBeforeDeadline(rows._array[0].num_available_before);
+                    }
+                }, (t, error) => {
+                    console.log(error);
+                });
+                // custom
+                tx.executeSql(`
+                    SELECT *
+                    FROM Goals JOIN GoalCustom USING(id_goal)
+                    WHERE id_goal = ?;
+                `, [route.params.goalData.id_goal], (_, { rows }) => {
+                    if (rows._array.length > 0) {
+                        setSelectedFrequency("custom");
+                        setCalendarSelectedDay(new Date(rows._array[0].first_date));
+                        setDaysBeforeDeadline(rows._array[0].num_available_before);
+                        setCustomDaysBetween(rows._array[0].num_days_between);
+                    }
+                }, (t, error) => {
+                    console.log(error);
+                });
+
+                //* smaller goals
+                tx.executeSql(`
+                    SELECT *
+                    FROM Goals JOIN SmallerGoals USING(id_goal)
+                    WHERE id_goal = ?;
+                `, [route.params.goalData.id_goal], (_, { rows }) => {
+                    const smallerGoalsTemp = [];
+                    rows._array.forEach(smallerGoal => {
+                        smallerGoalsTemp.push(smallerGoal.name);
+                    })
+                    setSmallerGoals(smallerGoalsTemp);
+                }, (t, error) => {
+                    console.log(error);
+                });
+            });
+        }
+    }, []);
 
     useEffect(() => {
         db.transaction((tx) => {
