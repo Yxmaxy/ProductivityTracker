@@ -300,75 +300,56 @@ const AddGoal = ({ route, navigation }) => {
             <Pressable 
                 style={formStyles.submitButton}
                 onPress={() => {
+                    const selectedDate = calendarSelectedDay.getFullYear() + "-" + ("0" + (calendarSelectedDay.getMonth() + 1)).slice(-2) + "-" + ("0" + calendarSelectedDay.getDate()).slice(-2);
                     if (!route.params.goalData) {
-                        if (isLongterm) {
-                            db.transaction((tx) => {
-                                // insert goals
-                                tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm) VALUES (?, ?, ?);", [name, selectedGroup, true], (_, resultSet) => {
-                                    const goalId = resultSet.insertId;
-                                    // insert smaller goals
-                                    smallerGoals.forEach(smallerGoalName => {
-                                        tx.executeSql("INSERT INTO SmallerGoals(name, id_goal) VALUES (?, ?);", [smallerGoalName, goalId], () => {}, (t, error) => {
-                                            console.log(error);
-                                        });
+                        db.transaction((tx) => {
+                            // insert goals
+                            tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, date_started) VALUES (?, ?, ?, ?);", [name, selectedGroup, isLongterm, currentDate], (_, resultSet) => {
+                                const goalId = resultSet.insertId;
+                                // insert smaller goals
+                                smallerGoals.forEach(smallerGoalName => {
+                                    tx.executeSql("INSERT INTO SmallerGoals(name, id_goal) VALUES (?, ?);", [smallerGoalName, goalId], () => {}, (t, error) => {
+                                        console.log(error);
                                     });
-                                }, (t, error) => {
-                                    console.log(error);
                                 });
-                            });
-                        } else {
-                            const selectedDate = calendarSelectedDay.getFullYear() + "-" + ("0" + (calendarSelectedDay.getMonth() + 1)).slice(-2) + "-" + ("0" + calendarSelectedDay.getDate()).slice(-2);
-                            db.transaction((tx) => {
-                                // insert goals
-                                tx.executeSql("INSERT INTO Goals(name, id_group, is_longterm, date_started) VALUES (?, ?, ?, ?);", [name, selectedGroup, false, currentDate], (_, resultSet) => {
-                                    const goalId = resultSet.insertId;
-                                    // insert smaller goals
-                                    smallerGoals.forEach(smallerGoalName => {
-                                        tx.executeSql("INSERT INTO SmallerGoals(name, id_goal) VALUES (?, ?);", [smallerGoalName, goalId], () => {}, (t, error) => {
+                                // insert depending on frequency
+                                switch (selectedFrequency) {
+                                    case "year":
+                                        tx.executeSql("INSERT INTO GoalYear(id_goal, date, num_available_before) VALUES (?, ?, ?);", [goalId, selectedDate, daysBeforeDeadline], () => {}, (t, error) => {
                                             console.log(error);
                                         });
-                                    });
-                                    // insert depending on frequency
-                                    switch (selectedFrequency) {
-                                        case "year":
-                                            console.log(selectedDate)
-                                            tx.executeSql("INSERT INTO GoalYear(id_goal, date, num_available_before) VALUES (?, ?, ?);", [goalId, selectedDate, daysBeforeDeadline], () => {}, (t, error) => {
-                                                console.log(error);
-                                            });
-                                            break;
-                                        case "month":
-                                            tx.executeSql("INSERT INTO GoalMonth(id_goal, day, num_available_before) VALUES (?, ?, ?);", [goalId, monthSelectedDay, daysBeforeDeadline], () => {}, (t, error) => {
-                                                console.log(error);
-                                            });
-                                            break;
-                                        case "week":
-                                            for (let i = 0; i < weekSelectedDays.length; i++) {
-                                                if (weekSelectedDays[i]) {
-                                                    const selectedDay = (i == 6) ? 0 : i + 1;
-                                                    tx.executeSql("INSERT INTO GoalWeek(id_goal, day) VALUES (?, ?);", [goalId, selectedDay], () => {}, (t, error) => {
-                                                        console.log(error);
-                                                    });
-                                                }
+                                        break;
+                                    case "month":
+                                        tx.executeSql("INSERT INTO GoalMonth(id_goal, day, num_available_before) VALUES (?, ?, ?);", [goalId, monthSelectedDay, daysBeforeDeadline], () => {}, (t, error) => {
+                                            console.log(error);
+                                        });
+                                        break;
+                                    case "week":
+                                        for (let i = 0; i < weekSelectedDays.length; i++) {
+                                            if (weekSelectedDays[i]) {
+                                                const selectedDay = (i == 6) ? 0 : i + 1;
+                                                tx.executeSql("INSERT INTO GoalWeek(id_goal, day) VALUES (?, ?);", [goalId, selectedDay], () => {}, (t, error) => {
+                                                    console.log(error);
+                                                });
                                             }
-                                            break;
-                                        case "custom":
-                                            tx.executeSql("INSERT INTO GoalCustom(id_goal, first_date, num_days_between, num_available_before) VALUES (?, ?, ?, ?);", [goalId, selectedDate, customDaysBetween, daysBeforeDeadline], () => {}, (t, error) => {
-                                                console.log(error);
-                                            });
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                }, (t, error) => {
-                                    console.log(error);
-                                });
-                                
+                                        }
+                                        break;
+                                    case "custom":
+                                        tx.executeSql("INSERT INTO GoalCustom(id_goal, first_date, num_days_between, num_available_before) VALUES (?, ?, ?, ?);", [goalId, selectedDate, customDaysBetween, daysBeforeDeadline], () => {}, (t, error) => {
+                                            console.log(error);
+                                        });
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }, (t, error) => {
+                                console.log(error);
                             });
-                        }
+                        });
                     } else {
                         // update goal
                         db.transaction((tx) => {
-                            tx.executeSql("UPDATE Goals SET name = ?, id_group = ?, is_longterm = ?, date_started = ? WHERE id_goal = ?;", [name, selectedGroup, false, currentDate, route.params.goalData.id_goal], () => {
+                            tx.executeSql("UPDATE Goals SET name = ?, id_group = ?, is_longterm = ?, date_started = ? WHERE id_goal = ?;", [name, selectedGroup, isLongterm, currentDate, route.params.goalData.id_goal], () => {
                                 tx.executeSql("SELECT * FROM SmallerGoals WHERE id_goal = ?;", [route.params.goalData.id_goal], (_, { rows }) => {
                                     const smallerGoalsTemp = [];
                                     rows._array.forEach(smallerGoal => {
@@ -393,8 +374,54 @@ const AddGoal = ({ route, navigation }) => {
                             }, (t, error) => {
                                 console.log(error);
                             });
+
+                            tx.executeSql("DELETE FROM GoalYear WHERE id_goal = ?;", [route.params.goalData.id_goal], () => {}, (t, error) => {
+                                console.log(error);
+                            });
+                            tx.executeSql("DELETE FROM GoalMonth WHERE id_goal = ?;", [route.params.goalData.id_goal], () => {}, (t, error) => {
+                                console.log(error);
+                            });
+                            tx.executeSql("DELETE FROM GoalWeek WHERE id_goal = ?;", [route.params.goalData.id_goal], () => {}, (t, error) => {
+                                console.log(error);
+                            });
+                            tx.executeSql("DELETE FROM GoalCustom WHERE id_goal = ?;", [route.params.goalData.id_goal], () => {}, (t, error) => {
+                                console.log(error);
+                            });
+
+                            // insert depending on frequency
+                            switch (selectedFrequency) {
+                                case "year":
+                                    tx.executeSql("INSERT INTO GoalYear(id_goal, date, num_available_before) VALUES (?, ?, ?);", [route.params.goalData.id_goal, selectedDate, daysBeforeDeadline], () => {}, (t, error) => {
+                                        console.log(error);
+                                    });
+                                    break;
+                                case "month":
+                                    tx.executeSql("INSERT INTO GoalMonth(id_goal, day, num_available_before) VALUES (?, ?, ?);", [route.params.goalData.id_goal, monthSelectedDay, daysBeforeDeadline], () => {}, (t, error) => {
+                                        console.log(error);
+                                    });
+                                    break;
+                                case "week":
+                                    for (let i = 0; i < weekSelectedDays.length; i++) {
+                                        if (weekSelectedDays[i]) {
+                                            const selectedDay = (i == 6) ? 0 : i + 1;
+                                            tx.executeSql("INSERT INTO GoalWeek(id_goal, day) VALUES (?, ?);", [route.params.goalData.id_goal, selectedDay], () => {}, (t, error) => {
+                                                console.log(error);
+                                            });
+                                        }
+                                    }
+                                    break;
+                                case "custom":
+                                    tx.executeSql("INSERT INTO GoalCustom(id_goal, first_date, num_days_between, num_available_before) VALUES (?, ?, ?, ?);", [route.params.goalData.id_goal, selectedDate, customDaysBetween, daysBeforeDeadline], () => {}, (t, error) => {
+                                        console.log(error);
+                                    });
+                                    break;
+                                default:
+                                    break;
+                            }
                         });
                     }
+                    
+
                     storeDispatch({ type: "TOGGLE_FORCE_UPDATE" });
                     navigation.pop();
                 }}
