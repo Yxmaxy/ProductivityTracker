@@ -41,8 +41,8 @@ export const formStyles = StyleSheet.create({
     },
     textInput: {
         backgroundColor: "white",
-        borderColor: "black",
-        borderWidth: 1,
+        borderColor: colors.colorPopDarkBlue,
+        borderWidth: 2,
         paddingLeft: 3,
         paddingRight: 3,
         borderRadius: 4,
