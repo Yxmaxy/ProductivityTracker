@@ -2,7 +2,7 @@
   "expo": {
     "name": "ProductivityTracker",
     "slug": "ProductivityTracker",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -19,7 +19,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "si.yxmaxy.productivityTracker",
-      "buildNumber": "1.0.1"
+      "buildNumber": "1.0.3"
     },
     "android": {
       "adaptiveIcon": {
@@ -28,7 +28,7 @@
       },
       "softwareKeyboardLayoutMode": "pan",
       "package": "si.yxmaxy.productivityTracker",
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"
